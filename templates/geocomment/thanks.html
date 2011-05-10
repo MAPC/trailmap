@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block style %}
+
+h2 {
+	text-align: center;
+}
+
+#thanks {
+	text-align: center;
+}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="prepend-2 span-20 append-2 last">
+
+<h2>Thank you!</h2>
+
+<p class="large" id="thanks"><a href="/feedback/{{ feedback.id }}">Your feedback</a> has been added to our system.</p>
+
+</div>
+
+{% endblock %}
