@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models
-from django.forms import ModelForm, HiddenInput, TextInput
+from django.forms import ModelForm, HiddenInput,  Textarea
 
 # Create your models here.
 
@@ -41,6 +41,6 @@ class PlaceForm(ModelForm):
         model = Place
         exclude = ('ip', 'followup',)
         widgets = {
-            'description': TextInput(),
+            'description': Textarea(),
             'location': HiddenInput(),         
         }
