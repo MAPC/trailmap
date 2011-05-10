@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'geocomment',
     'south',
+    'disqus',
 )
 
 # A sample logging configuration. The only tangible logging
