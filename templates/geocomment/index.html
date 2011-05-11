@@ -118,7 +118,7 @@
 					attribution: "<a href='http://mapc.org/'>MAPC</a>"
 				}
 			);
-			layer_walking = new OpenLayers.Layer.WMS("Walking Facilites",
+			layer_walking = new OpenLayers.Layer.WMS("Paths and Trails",
 				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 				{ 
 					layers: "MAPC:bikeped_facilities",
@@ -133,7 +133,7 @@
 					attribution: "<a href='http://mapc.org/'>MAPC</a>"
 				}
 			);
-			layer_bike = new OpenLayers.Layer.WMS("Bicycle Facilties",
+			layer_bike = new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
 				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 				{ 
 					layers: "MAPC:bikeped_facilities",
@@ -201,7 +201,7 @@
 			{% endif %}
 			
 			// Compose map
-			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_bike, layer_walking, layer_regional, layer_markers]);
+			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_regional, layer_walking, layer_bike, layer_markers]);
 			map.setCenter( new OpenLayers.LonLat(lon, lat).transform(proj_wgs84, proj_osm), zoom );	
 			
 			// UI

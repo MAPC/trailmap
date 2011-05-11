@@ -131,12 +131,11 @@
 			);
 			
 			// Compose
-			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_bike, layer_walking, layer_regional]);
+			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_regional, layer_walking, layer_bike, layer_markers]);
 			map.setCenter( new OpenLayers.LonLat(lon, lat).transform(proj_wgs84, proj_osm), zoom );		
 			
 			// Map Functionality
 			layer_markers = new OpenLayers.Layer.Markers( "Feedback" );
-            map.addLayer(layer_markers);
         	
             // add markers
             function addMarker(ll, popupContent) {
