@@ -23,6 +23,12 @@
 		font-style: italic;
 	}
 	
+	#map_legend img {
+		width: 12px;
+		height: 12px;
+		padding-left: 12px;
+	}
+	
 {% endblock %}
 
 {% block javascript %}
@@ -100,7 +106,7 @@
 					attribution: "<a href='http://mapc.org/'>MAPC</a>"
 				}
 			);
-			layer_walking = new OpenLayers.Layer.WMS("Walking Facilites",
+			layer_walking = new OpenLayers.Layer.WMS("Paths and Trails",
 				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 				{ 
 					layers: "MAPC:bikeped_facilities",
@@ -111,11 +117,10 @@
 				},
 				{
 					isBaseLayer: false,
-					visibility: false,
 					attribution: "<a href='http://mapc.org/'>MAPC</a>"
 				}
 			);
-			layer_bike = new OpenLayers.Layer.WMS("Bicycle Facilties",
+			layer_bike = new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
 				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 				{ 
 					layers: "MAPC:bikeped_facilities",
@@ -129,14 +134,13 @@
 					attribution: "<a href='http://mapc.org/'>MAPC</a>"
 				}
 			);
+			layer_markers = new OpenLayers.Layer.Markers( "Feedback" );
 			
 			// Compose
 			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_regional, layer_walking, layer_bike, layer_markers]);
 			map.setCenter( new OpenLayers.LonLat(lon, lat).transform(proj_wgs84, proj_osm), zoom );		
 			
-			// Map Functionality
-			layer_markers = new OpenLayers.Layer.Markers( "Feedback" );
-        	
+			// Map Functionality        	
             // add markers
             function addMarker(ll, popupContent) {
 
@@ -180,13 +184,23 @@
 {% endblock %}
 	
 {% block map %}
-
-		</div>
 		
 		<div id="map_canvas"></div>
 		
-		<div class="container">
-
+		<div id="map_legend">			
+			<img src="{{ STATIC_URL }}img/ct.png" alt="icon" />Cycle track
+			<img src="{{ STATIC_URL }}img/bl.png" alt="icon" />Bike lane
+			<img src="{{ STATIC_URL }}img/sl.png" alt="icon" />Shared lane
+			<img src="{{ STATIC_URL }}img/or.png" alt="icon" />On-road route
+			<img src="{{ STATIC_URL }}img/e.png" alt="icon" />Improved path 
+			<img src="{{ STATIC_URL }}img/u.png" alt="icon" />Unimproved path 
+			<img src="{{ STATIC_URL }}img/t.png" alt="icon" />Walking path or trail 
+			<img src="{{ STATIC_URL }}img/w.png" alt="icon" />Water trail 
+			<img src="{{ STATIC_URL }}img/lw.png" alt="icon" />Regional or local walking trail 
+			<img src="{{ STATIC_URL }}img/lb.png" alt="icon" />Regional bicycle route<br>
+			<img src="{{ STATIC_URL }}js/ol/img/layer-switcher-maximize.png" alt="icon" /> Layer Switcher (show and hide map layers)
+		</div>
+		
 {% endblock %}
 		
 {% block body %}

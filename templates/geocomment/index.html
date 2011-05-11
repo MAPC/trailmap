@@ -9,12 +9,11 @@
 		margin-bottom: 18px;
 	}
 	
-	#map_button {
+	#map_legend {
 		width: 100%;
-		text-align: right;
 	}
 	
-	#map_button button {
+	div.feedbacklink button {
 		float: right;
 	}
 	
@@ -40,6 +39,12 @@
 	#bikemap-tn {
 		float: right;
 		margin-top: 18px;
+	}
+	
+	#map_legend img {
+		width: 12px;
+		height: 12px;
+		padding-left: 12px;
 	}
 	
 {% endblock %}
@@ -129,7 +134,6 @@
 				},
 				{
 					isBaseLayer: false,
-					visibility: false,
 					attribution: "<a href='http://mapc.org/'>MAPC</a>"
 				}
 			);
@@ -190,15 +194,9 @@
 	            layer_markers.addMarker(marker);
         	}
         	
-        	{% if feedback %}
-        	
-        	{% for marker in feedback %}
-        	
+        	{% if feedback %}{% for marker in feedback %}
             addMarker(new OpenLayers.LonLat({{ marker.location.x }},{{ marker.location.y }}).transform(proj_wgs84, proj_osm), "{{ marker.description }}<br><a href='{{ marker.get_absolute_url }}'>Add New Comment</a>");
-            
-            {% endfor %}
-            
-			{% endif %}
+            {% endfor %}{% endif %}
 			
 			// Compose map
 			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_regional, layer_walking, layer_bike, layer_markers]);
@@ -209,16 +207,16 @@
 			$("div.dataLbl").html("Bike/Ped Layers");
 			
 			// Feedbackform
-			$(".feedbacklink").click(function() {
+			$("button.feedbacklink").click(function() {
 				$("#feedbackform").toggle("slow", function() {
-					$("#feedbacklink").unbind().hide();					
+					$("button.feedbacklink").unbind().hide();					
 
             		// Add draggable marker/feature            		
             		var layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
     				layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
 					        graphicYOffset: -25,
 					        graphicXOffset: -13,
-					        externalGraphic: "{{ STATIC_URL }}js/ol/img/marker-blue.png",
+					        externalGraphic: "{{ STATIC_URL }}js/ol/img/marker-gold.png",
 					        pointRadius: 13
 					    })
 				    );            		
@@ -254,14 +252,26 @@
 	
 {% block map %}
 
-		</div>
-		
 		<div id="map_canvas"></div>
 		
-		<div id="map_button"><button class="feedbacklink" href="#" title="Tell us where we should improve the map!">Feedback</button></div>
-			
-		<div class="container">
-
+		<div class="feedbacklink">
+			<button class="feedbacklink" href="#" title="Tell us where we should improve the map!">Feedback</button>
+		</div>
+		
+		<div id="map_legend">			
+			<img src="{{ STATIC_URL }}img/ct.png" alt="icon" />Cycle track
+			<img src="{{ STATIC_URL }}img/bl.png" alt="icon" />Bike lane
+			<img src="{{ STATIC_URL }}img/sl.png" alt="icon" />Shared lane
+			<img src="{{ STATIC_URL }}img/or.png" alt="icon" />On-road route
+			<img src="{{ STATIC_URL }}img/e.png" alt="icon" />Improved path 
+			<img src="{{ STATIC_URL }}img/u.png" alt="icon" />Unimproved path 
+			<img src="{{ STATIC_URL }}img/t.png" alt="icon" />Walking path or trail 
+			<img src="{{ STATIC_URL }}img/w.png" alt="icon" />Water trail 
+			<img src="{{ STATIC_URL }}img/lw.png" alt="icon" />Regional or local walking trail 
+			<img src="{{ STATIC_URL }}img/lb.png" alt="icon" />Regional bicycle route<br>
+			<img src="{{ STATIC_URL }}js/ol/img/layer-switcher-maximize.png" alt="icon" /> Layer Switcher (show and hide map layers)
+		</div>
+		
 {% endblock %}
 		
 {% block body %}
@@ -272,7 +282,7 @@
 	
 				{% csrf_token %}
 					
-				<div>Please drag the blue marker <img src="{{ STATIC_URL }}js/ol/img/marker-blue.png" height="18" alt="blue marker" /> to your desired location and use the form below for submitting your feedback:</div>
+				<div>Please drag the yellow marker <img src="{{ STATIC_URL }}js/ol/img/marker-gold.png" height="18" alt="blue marker" /> to your desired location and use the form below for submitting your feedback:</div>
 				
 				{{ form.location }}
 				
