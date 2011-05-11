@@ -36,8 +36,9 @@
 		border-bottom: solid 1px #b4c6d0;
 	}
 	
-	h1 {
+	h1 a, h1 a:hover, h1 a:visited, h1 a:active {
 		color: #ffffff;
+		text-decoration: none;
 	}
 	
 	{% block style %}{% endblock %}
@@ -53,7 +54,7 @@
 	<div id="wrap">
 		
 			<div id="header">
-				<h1>Greater Boston  Cycling and Walking Map</h1>
+				<h1><a href="/" title="Greater Boston Cycling and Walking Map">Greater Boston Cycling and Walking Map</a></h1>
 			</div>
 			
 			{% block map %}{% endblock %}
