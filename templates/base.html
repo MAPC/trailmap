@@ -28,6 +28,18 @@
 		text-align: center;
 	}
 	
+	#header {
+		padding-top: 18px;
+		width: 100%;
+		height: 60px;
+		background-color: #014991;
+		border-bottom: solid 1px #ffffff;
+	}
+	
+	h1 {
+		color: #ffffff;
+	}
+	
 	{% block style %}{% endblock %}
 	</style>
 	
@@ -39,12 +51,13 @@
 <body>
 	
 	<div id="wrap">
-		<div class="container">
 		
-			<div id="header" class="prepend-2 span-20 append-2 append-bottom prepend-top last">
+			<div id="header">
 				<h1>Greater Boston  Cycling and Walking Map</h1>
 			</div>
-		
+			
+		<div class="container">
+			
 			{% block map %}{% endblock %}
 		
 			{% block body %}{% endblock %}
@@ -54,7 +67,7 @@
 					Questions? Please contact <a href="mailto:trailmap@mapc.org?subject=Trailmap question">trailmap@mapc.org</a><br>
 					&copy; <a href="http://www.mapc.org" title="Metropolitan Area Planning Council">MAPC</a> 2011
 				</p>	
-			</div>
+			</div>			
 		
 		</div>
 		

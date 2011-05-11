@@ -9,13 +9,37 @@
 		margin-bottom: 18px;
 	}
 	
+	#map_button {
+		width: 100%;
+		text-align: right;
+	}
+	
+	#map_button button {
+		float: right;
+	}
+	
 	#feedbackform {
 		display: none;
+		margin-top: 18px;
 	}
 	
 	#id_description {
 		width: 100%;
 		height: 80px;		
+	}
+	
+	#disclaimer {
+		font-style: italic;
+	}
+	
+	.facility {
+		color: #63a236;
+		font-weight: bold;
+	}
+	
+	#bikemap-tn {
+		float: right;
+		margin-top: 18px;
 	}
 	
 {% endblock %}
@@ -185,16 +209,16 @@
 			$("div.dataLbl").html("Bike/Ped Layers");
 			
 			// Feedbackform
-			$("#feedbacklink").click(function() {
+			$(".feedbacklink").click(function() {
 				$("#feedbackform").toggle("slow", function() {
-					$("#feedbacklink").unbind();					
+					$("#feedbacklink").unbind().hide();					
 
             		// Add draggable marker/feature            		
             		var layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
     				layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
 					        graphicYOffset: -25,
 					        graphicXOffset: -13,
-					        externalGraphic: "{{ STATIC_URL }}js/ol/img/marker-green.png",
+					        externalGraphic: "{{ STATIC_URL }}js/ol/img/marker-blue.png",
 					        pointRadius: 13
 					    })
 				    );            		
@@ -235,21 +259,21 @@
 		
 		<div id="map_canvas"></div>
 		
+		<div id="map_button"><button class="feedbacklink" href="#" title="Tell us where we should improve the map!">Feedback</button></div>
+			
 		<div class="container">
 
 {% endblock %}
 		
 {% block body %}
 
-		<div id="content" class="prepend-2 span-20 append-2 prepend-top last">
-			
-			<p class="large"><a id="feedbacklink" href="#">Provide Feedback</a></p>
+		<div id="content" class="prepend-2 span-20 append-2 last">
 			
 			<form id="feedbackform" action="/feedback/new/" method="post">
 	
 				{% csrf_token %}
 					
-				<div>Please drag the green marker <img src="{{ STATIC_URL }}js/ol/img/marker-green.png" height="18" alt="green marker" /> to your desired location and use the form below for submitting your feedback:</div>
+				<div>Please drag the blue marker <img src="{{ STATIC_URL }}js/ol/img/marker-blue.png" height="18" alt="blue marker" /> to your desired location and use the form below for submitting your feedback:</div>
 				
 				{{ form.location }}
 				
@@ -266,9 +290,59 @@
 				{% endif %}	
 				</div>
 		
-				<input type="submit" value="Submit Feedback!" />
+				<input type="submit" value="Submit Feedback" />
 			
 			</form>
+			
+			<img id="bikemap-tn" src="{{ STATIC_URL }}img/bikemap-tn.jpg" alt="Greater Boston Cycling and Walking Map" />
+			
+			<p><h3>Welcome to MAPC's 2011 Greater Boston Cycling and Walking Map!</h3>
+				This map is the most comprehensive compilation of the regions walking and bicycling facilities ever prepared. 
+				Our goal is to provide a single source of information to enable people to plan and then traverse the region 
+				by foot and/or on bicycle.</p>
+			
+			<p class="prepend-top"><span class="facility">Walking Facilities</span> - includes hiking trails in conservation lands, 
+				paths through campuses, institutions, city parks, and other pedestrian facilities that are not along roadways.</p>
+
+			<p><span class="facility">Bicycle Facilities</span> - includes on-road designated facilities including bicycle lanes, 
+				shared lane markings, cycle tracks, and select on-road connections.</p>
+
+			<p><span class="facility">Shared Use Paths</span> – includes trails on former railroad rights-of-way, rivers, and other 
+				corridors and designed for shared use by cyclists, walkers, and other non-motorized transport. Improved paths are 
+				either paved, or with a stabilized firm surface, ideal for use by road bicycles, wheelchairs, strollers etc. 
+				Unimproved paths are open to public use but not improved for uses beyond hiking or mountain biking.</p>
+
+			<p><span class="facility">Regional Networks</span> – includes linear corridors that have been signed or otherwise designated. Walking trails include the Bay Circuit, Charles River Link, Warner Trail, Western Greenway, and proposed aqueduct trail system. Bicycle routes include the East Coast Greenway and the Claire Saltonstall Bikeway.</p>
+
+			<p>This map was created by MAPC with contributions from cities, towns, state agencies, land trusts, other organizations, and individuals. 
+				This printed map represents the information available at the time of publication and is not considered a complete map. Gaps exist, 
+				particularly with walking trails. This map is updated on a regular basis, incorporating new data and your <a href="#" class="feedbacklink">feedback</a>.</p>
+			
+			<p><h4>Data within the map is credited to the following sources:</h4>
+				<ul>
+					<li>MAPC & MAPC Municipalities</li>
+					<li>Massachusetts Department of Transportation (MassDOT)</li>
+					<li>Office of Geographic and Environmental Information (MassGIS)</li>
+					<li>Office of Geographic and Environmental Information (MassGIS)</li>
+					<li>Commonwealth of Massachusetts Executive Office of Energy and Environmental Affairs</li>
+					<li>some trail data &copy; <a href="http://www.openstreetmap.org" title="OpenStreetMap">OpenStreetMap</a> contributors, CC-BY-SA.</li>
+				</ul>
+			</p>
+			
+			<h4>Funding for this project is courtesy of the Boston Region Metropolitan Planning Organization.</h4>
+			
+			<h4>Map printing courtesy of generous support from The Lawrence and Lillian Solomon Fund.</h4>
+ 
+			<p>For more information and to provide feedback please contact:<br>
+				David Loutzenheiser<br>
+				Transportation Planner, Bicycle and	Pedestrian Program<br>
+				<a href="mailto:dloutzenheiser@mapc.org">dloutzenheiser@mapc.org</a></p>
+			
+			<p id="disclaimer">Disclaimer: 
+				The data herein is provided as is and for information purposes only. MAPC does not guarantee its completeness or accuracy. 
+				This project is a work in progress. Weather, traffic, construction or other events out of MAPC’s control may affect the utility 
+				of the data provided. Plan accordi ngly and use caution, obey all applicable laws and follow generally accepted practices when 
+				using these facilities.</p>
 
 		</div>
 
