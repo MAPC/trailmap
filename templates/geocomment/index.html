@@ -234,7 +234,6 @@
             			var feedback_lonlat = new OpenLayers.LonLat(feedback_feature.geometry.x, feedback_feature.geometry.y);
             			feedback_lonlat.transform(proj_osm, proj_wgs84);            			
             			$("#id_location").val("POINT(" + feedback_lonlat.lon + " " + feedback_lonlat.lat + ")")						
-            			console.log($("#id_location").val());
             		}
             		map.addControl(feedback_drag);
             		feedback_drag.activate();            		
