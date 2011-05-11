@@ -8,6 +8,8 @@ from geocomment.models import Place, PlaceForm
 
 def index(request):
     
+    feedback = Place.objects.exclude(followup='c')
+    
     if request.method == 'POST':
         form = PlaceForm(request.POST)
         if form.is_valid():
@@ -24,7 +26,8 @@ def index(request):
         form = PlaceForm()
         
     return render_to_response('geocomment/index.html', 
-                              {'form': form, 
+                              {'form': form,
+                               'feedback': feedback, 
                                }, 
                                context_instance=RequestContext(request))
     

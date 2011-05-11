@@ -36,7 +36,7 @@
 			var zoom = 14;
 			var map, layer_cloudmade, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional, layer_markers;
 			var proj_wgs84, proj_osm;
-			var marker, feature, marker_ll, marker_desc, size, offset, icon;
+			var marker, feature;
 			
 			// Projections
 			proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
@@ -51,10 +51,6 @@
 					new OpenLayers.Control.ScaleLine(),
 					new OpenLayers.Control.Attribution()
 				],
-				eventListeners: {
-					// "moveend": console.log("move"),
-					// "zoomend": console.log("move")
-				},
 				restrictedExtent: new OpenLayers.Bounds(-72, 42, -70, 43).transform(proj_wgs84, proj_osm),
 				maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
 				maxResolution: 156543.0399,
@@ -68,9 +64,9 @@
 				key: '7a0df0d49fb14d27b35022fcb6b49d6d',
 				styleId: 998
 			});
-			layer_cloudmade = new OpenLayers.Layer.CloudMade("CloudMade", {
+			layer_cloudmade = new OpenLayers.Layer.CloudMade("Fresh", {
 				key: '7a0df0d49fb14d27b35022fcb6b49d6d',
-				styleId: 1
+				styleId: 997
 			});	
 			layer_toposm = new OpenLayers.Layer.OSM("TopOSM", 
 				"http://toposm.com/ma/final/${z}/${x}/${y}.png",
@@ -137,33 +133,8 @@
 			// Map Functionality
 			layer_markers = new OpenLayers.Layer.Markers( "Feedback" );
             map.addLayer(layer_markers);
-/*
-            size = new OpenLayers.Size(21,25);
-           	offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-           	icon = new OpenLayers.Icon("{{ STATIC_URL }}js/ol/img/marker.png",size,offset);
-           	marker = new OpenLayers.Marker(new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform(proj_wgs84, proj_osm),icon);
-           	marker.events.register("mousedown", marker, function(evt) {
-           		
-           		var popup = new OpenLayers.Popup.AnchoredBubble("popup_"+this.id, 
-           			new OpenLayers.LonLat(marker.lonlat.lon, marker.lonlat.lat),
-           			new OpenLayers.Size(200,200),
-           			"popup showing",
-           			true);
-           		// popup.lonlat = marker.lonlat;
-           		map.addPopup(popup);
-           	});
-            
-            layer_markers.addMarker(marker);
-            */
-            AutoSizeFramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-            	'autoSize': true
-        	});
         	
-        	//add marker
-            marker_ll = new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform(proj_wgs84, proj_osm);
-            marker_desc = "{{ feedback.description }}";
-            addMarker(new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform(proj_wgs84, proj_osm), "{{ feedback.description }}");
-            
+            // add markers
             function addMarker(ll, popupContent) {
 
 	            var feature = new OpenLayers.Feature(layer_markers, ll); 
@@ -191,8 +162,9 @@
 	
 	            layer_markers.addMarker(marker);
         	}
+        	
+            addMarker(new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform(proj_wgs84, proj_osm), "{{ feedback.description }}");
             
-
 			
 			// UI
 			$("div.baseLbl").html("Base Layers");

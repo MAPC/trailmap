@@ -33,7 +33,7 @@
         	var lon = -71.08;
 			var lat = 42.35;
 			var zoom = 12;
-			var map, layer_cloudmade, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional;
+			var map, layer_cloudmade, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional, layer_markers, layer_feedback;
 			var proj_wgs84, proj_osm;
 			
 			// Projections
@@ -49,10 +49,6 @@
 					new OpenLayers.Control.ScaleLine(),
 					new OpenLayers.Control.Attribution()
 				],
-				eventListeners: {
-					// "moveend": console.log("move"),
-					// "zoomend": console.log("move")
-				},
 				restrictedExtent: new OpenLayers.Bounds(-72, 42, -70, 43).transform(proj_wgs84, proj_osm),
 				maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
 				maxResolution: 156543.0399,
@@ -66,9 +62,9 @@
 				key: '7a0df0d49fb14d27b35022fcb6b49d6d',
 				styleId: 998
 			});
-			layer_cloudmade = new OpenLayers.Layer.CloudMade("CloudMade", {
+			layer_cloudmade = new OpenLayers.Layer.CloudMade("Fresh", {
 				key: '7a0df0d49fb14d27b35022fcb6b49d6d',
-				styleId: 1
+				styleId: 997
 			});	
 			layer_toposm = new OpenLayers.Layer.OSM("TopOSM", 
 				"http://toposm.com/ma/final/${z}/${x}/${y}.png",
@@ -127,10 +123,11 @@
 					attribution: "<a href='http://mapc.org/'>MAPC</a>"
 				}
 			);
-			
-			// Compose
-			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_bike, layer_walking, layer_regional]);
-			map.setCenter( new OpenLayers.LonLat(lon, lat).transform(proj_wgs84, proj_osm), zoom );		
+			layer_markers = new OpenLayers.Layer.Markers( "Feedback",
+	            {
+	            	visibility: false
+	            }
+            );
 			
 			// Map Functionality
 			map.events.on({
@@ -139,21 +136,92 @@
 					$("#id_location").val("POINT(" + mapcenter.lon + " " + mapcenter.lat + ")")
 				}
 			});
+
+            // add markers            
+            function addMarker(ll, popupContent) {
+
+	            var feature = new OpenLayers.Feature(layer_markers, ll); 
+	            feature.closeBox = true;
+	            feature.popupClass = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
+            		"autoSize": true
+        		});
+	            feature.data.popupContentHTML = popupContent;
+	            feature.data.overflow = "auto";
+	                    
+	            var marker = feature.createMarker();
+	
+	            var markerClick = function (evt) {
+	                if (this.popup == null) {
+	                    this.popup = this.createPopup(this.closeBox);
+	                    map.addPopup(this.popup);
+	                    this.popup.show();
+	                } else {
+	                    this.popup.toggle();
+	                }
+	                currentPopup = this.popup;
+	                OpenLayers.Event.stop(evt);
+	            };
+	            marker.events.register("mousedown", feature, markerClick);
+	
+	            layer_markers.addMarker(marker);
+        	}
+        	
+        	{% if feedback %}
+        	
+        	{% for marker in feedback %}
+        	
+            addMarker(new OpenLayers.LonLat({{ marker.location.x }},{{ marker.location.y }}).transform(proj_wgs84, proj_osm), "{{ marker.description }}<br><a href='{{ marker.get_absolute_url }}'>Add New Comment</a>");
+            
+            {% endfor %}
+            
+			{% endif %}
+			
+			// Compose map
+			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_bike, layer_walking, layer_regional, layer_markers]);
+			map.setCenter( new OpenLayers.LonLat(lon, lat).transform(proj_wgs84, proj_osm), zoom );	
 			
 			// UI
 			$("div.baseLbl").html("Base Layers");
 			$("div.dataLbl").html("Bike/Ped Layers");
 			
+			// Feedbackform
+			$("#feedbacklink").click(function() {
+				$("#feedbackform").toggle("slow", function() {
+					$("#feedbacklink").unbind();					
+
+            		// Add draggable marker/feature            		
+            		var layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
+    				layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
+					        graphicYOffset: -25,
+					        graphicXOffset: -13,
+					        externalGraphic: "{{ STATIC_URL }}js/ol/img/marker-green.png",
+					        pointRadius: 13
+					    })
+				    );            		
+            		var feedback_pt = new OpenLayers.Geometry.Point(map.getCenter().lon, map.getCenter().lat)
+					var feedback_feature = new OpenLayers.Feature.Vector(feedback_pt);
+            		
+            		layer_feedback.addFeatures([feedback_feature]);
+					map.addLayer(layer_feedback);
+            		
+            		map.addControl(new OpenLayers.Control.MousePosition());
+            		var feedback_drag = new OpenLayers.Control.DragFeature(layer_feedback);
+            		feedback_drag.onComplete = function(f) {            			
+            			var feedback_lonlat = new OpenLayers.LonLat(feedback_feature.geometry.x, feedback_feature.geometry.y);
+            			feedback_lonlat.transform(proj_osm, proj_wgs84);            			
+            			$("#id_location").val("POINT(" + feedback_lonlat.lon + " " + feedback_lonlat.lat + ")")						
+            			console.log($("#id_location").val());
+            		}
+            		map.addControl(feedback_drag);
+            		feedback_drag.activate();            		
+  				});				
+			});
 			$("#feedbackform").submit(function() {
 				// simple validation
 				if (!$("#id_description").val()) {
 					alert("Please fill out the form.");
 				  	return false;
 				}
-			});
-			
-			$('#feedbacklink').click(function() {
-				$('#feedbackform').toggle('slow');
 			});
         
         });
@@ -181,7 +249,7 @@
 	
 				{% csrf_token %}
 					
-				<div>Please drag the marker to your desired location and use the form below for submitting your feedback:</div>
+				<div>Please drag the green marker <img src="{{ STATIC_URL }}js/ol/img/marker-green.png" height="18" alt="green marker" /> to your desired location and use the form below for submitting your feedback:</div>
 				
 				{{ form.location }}
 				
