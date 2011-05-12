@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <title>OpenLayers with jQuery Mobile</title>
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0;">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css">
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.5.2.min.js" type="text/javascript"></script>
+        <script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/m/style.mobile.css" type="text/css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/m/style.mobile-jq.css" type="text/css">
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script> 
+        <script src="{{ STATIC_URL }}js/ol/OpenLayers.js?mobile"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/cloudmade.js"></script>
+        <script src="{{ STATIC_URL }}js/m/mobile-base.js"></script>
+        <script src="{{ STATIC_URL }}js/m/mobile-jq.js"></script>
+    </head>
+    <body>
+        <h1 id="title">Greater Boston Cycling and Walking Map</h1>
+        <div id="tags">
+          Boston, Bicycle, Walking, Map
+        </div>
+        <p id="shortdesc">
+          This map is the most comprehensive compilation of the regions walking and bicycling facilities ever prepared. 
+          Our goal is to provide a single source of information to enable people to plan and then traverse the region by 
+          foot and/or on bicycle.
+        </p>
+
+        <div data-role="page" id="mappage">
+          <div data-role="content">
+            <div id="map"></div>
+          </div>
+
+          <div data-role="footer">
+            <a href="#infopage" data-icon="info" data-role="button">Info</a>
+            <a href="#" id="locate" data-icon="locate" data-role="button">Locate</a>
+            <a href="#layerspage" data-icon="layers" data-role="button">Layers</a>
+          </div>
+          <div id="navigation" data-role="controlgroup" data-type="vertical">
+            <a href="#" data-role="button" data-icon="plus" id="plus"
+               data-iconpos="notext"></a>
+            <a href="#" data-role="button" data-icon="minus" id="minus"
+               data-iconpos="notext"></a>
+          </div>
+        </div>
+
+        <div data-role="page" id="infopage">
+          <div data-role="header">
+            <h1>Info</h1>
+            <a href="#moreinfopage" data-icon="arrow-r" data-role="button" class="ui-btn-right">more</a>
+          </div>
+          <div data-role="content">
+          	<h2>Map legend</h2>          	
+          	<ul>
+				<li><img src="{{ STATIC_URL }}img/ct.png" alt="icon">Cycle track</li>
+				<li><img src="{{ STATIC_URL }}img/bl.png" alt="icon">Bike lane</li>
+				<li><img src="{{ STATIC_URL }}img/sl.png" alt="icon">Shared lane</li>
+				<li><img src="{{ STATIC_URL }}img/or.png" alt="icon">On-road route</li>
+				<li><img src="{{ STATIC_URL }}img/e.png" alt="icon">Improved path</li>
+				<li><img src="{{ STATIC_URL }}img/u.png" alt="icon">Unimproved path</li>
+				<li><img src="{{ STATIC_URL }}img/t.png" alt="icon">Walking path or trail</li>
+				<li><img src="{{ STATIC_URL }}img/w.png" alt="icon">Water trail</li>
+				<li><img src="{{ STATIC_URL }}img/lw.png" alt="icon">Regional or local walking trail</li>
+				<li><img src="{{ STATIC_URL }}img/lb.png" alt="icon">Regional bicycle route</li>
+			</ul>
+			<p id="disclaimer">Disclaimer: 
+						The data herein is provided as is and for information purposes only. MAPC does not guarantee its completeness or accuracy. 
+						This project is a work in progress. Weather, traffic, construction or other events out of MAPC’s control may affect the utility 
+						of the data provided. Plan accordingly and use caution, obey all applicable laws and follow generally accepted practices when 
+						using these facilities.</p>	
+          </div>
+        </div>
+        
+        	<div data-role="page" id="moreinfopage">
+          		<div data-role="header">
+            		<h1>More info</h1>
+            		<a href="#sourcepage" data-icon="arrow-r" data-role="button" class="ui-btn-right">Sources</a>
+         		 </div>
+          		<div data-role="content">          			
+          			<p><span class="facility">Walking Facilities</span> - includes hiking trails in conservation lands, 
+						paths through campuses, institutions, city parks, and other pedestrian facilities that are not along roadways.</p>
+		
+					<p><span class="facility">Bicycle Facilities</span> - includes on-road designated facilities including bicycle lanes, 
+						shared lane markings, cycle tracks, and select on-road connections.</p>
+		
+					<p><span class="facility">Shared Use Paths</span> – includes trails on former railroad rights-of-way, rivers, and other 
+						corridors and designed for shared use by cyclists, walkers, and other non-motorized transport. Improved paths are 
+						either paved, or with a stabilized firm surface, ideal for use by road bicycles, wheelchairs, strollers etc. 
+						Unimproved paths are open to public use but not improved for uses beyond hiking or mountain biking.</p>
+		
+					<p><span class="facility">Regional Networks</span> – includes linear corridors that have been signed or otherwise 
+						designated. Walking trails include the Bay Circuit, Charles River Link, Warner Trail, Western Greenway, and 
+						proposed aqueduct trail system. Bicycle routes include the East Coast Greenway and the Claire Saltonstall Bikeway.</p>		         			
+          		</div>
+			</div>
+			
+			<div data-role="page" id="sourcepage">
+				<div data-role="header">
+            		<h1>Data sources</h1>
+            		<a href="#contactpage" data-icon="arrow-r" data-role="button" class="ui-btn-right">Contact</a>
+         		 </div>
+         		 <div data-role="content">  
+	         		 <p>This map was created by MAPC with contributions from cities, towns, state agencies, land trusts, other organizations, and individuals. 
+							This printed map represents the information available at the time of publication and is not considered a complete map. Gaps exist, 
+							particularly with walking trails. This map is updated on a regular basis, incorporating new data and your feedback</a>.</p>
+	         		 
+					<strong>Data within the map is credited to the following sources:</strong>
+					<ul>
+						<li>MAPC & MAPC Municipalities</li>
+						<li>Massachusetts Department of Transportation (MassDOT)</li>
+						<li>Office of Geographic and Environmental Information (MassGIS), Commonwealth of Massachusetts Executive Office of Energy and Environmental Affairs</li>
+						<li>some trail data &copy; <a href="http://www.openstreetmap.org" rel="external" class="ui-link-inherit" title="OpenStreetMap">OpenStreetMap</a> contributors, CC-BY-SA.</li>
+					</ul>					
+				</div>
+			</div>	
+
+			<div data-role="page" id="contactpage">
+				<div data-role="header">
+            		<h1>Data sources</h1>
+            		<a href="#mappage" data-icon="home" data-role="button" class="ui-btn-right">Map</a>
+         		 </div>
+					<p><strong>For more information and to provide feedback please contact:</strong></p>
+					<p>
+						<a href="mailto:dloutzenheiser@mapc.org">David Loutzenheiser</a>, <br>
+						Transportation Planner, Bicycle and	Pedestrian Program
+					</p>				
+	
+					<p>&copy; <a href="http://www.mapc.org" title="Metropolitan Area Planning Council" rel="external" >MAPC</a> 2011</p>
+				</div>
+			</div>	
+
+        <div data-role="page" id="layerspage">
+          <div data-role="header">
+            <h1>Layers</h1>
+          </div>
+          <div data-role="content">
+            <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
+            </ul>
+          </div>
+        </div>
+    </body>
+</html>

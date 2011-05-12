@@ -9,8 +9,11 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'trailmap1.views.home', name='home'),
     # url(r'^trailmap/', include('trailmap.foo.urls')),
-    # (r'^$', direct_to_template, {'template': 'index.html'}),
+    # default
     (r'^$', 'geocomment.views.index'),
+    
+    # mobile version
+    (r'^m/', direct_to_template, {'template': 'm/index.html'}),
     
     # add new feedback
     (r'^feedback/new/', 'geocomment.views.index'),
