@@ -62,7 +62,7 @@
         	var lon = -71.08;
 			var lat = 42.35;
 			var zoom = 12;
-			var map, layer_cloudmade, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional, layer_markers, layer_feedback;
+			var map, layer_osm, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional, layer_markers, layer_feedback;
 			var proj_wgs84, proj_osm;
 			
 			// Projections
@@ -91,10 +91,7 @@
 				key: '7a0df0d49fb14d27b35022fcb6b49d6d',
 				styleId: 998
 			});
-			layer_cloudmade = new OpenLayers.Layer.CloudMade("Fresh", {
-				key: '7a0df0d49fb14d27b35022fcb6b49d6d',
-				styleId: 997
-			});	
+			layer_osm = new OpenLayers.Layer.OSM("OpenStreetMap");
 			layer_toposm = new OpenLayers.Layer.OSM("TopOSM", 
 				"http://toposm.com/ma/final/${z}/${x}/${y}.png",
 				{
@@ -199,7 +196,7 @@
             {% endfor %}{% endif %}
 			
 			// Compose map
-			map.addLayers([layer_paledawn, layer_toposm, layer_cloudmade, layer_googsat, layer_regional, layer_walking, layer_bike, layer_markers]);
+			map.addLayers([layer_paledawn, layer_osm, layer_toposm, layer_googsat, layer_regional, layer_walking, layer_bike, layer_markers]);
 			map.setCenter( new OpenLayers.LonLat(lon, lat).transform(proj_wgs84, proj_osm), zoom );	
 			
 			// UI
@@ -332,9 +329,7 @@
 				<ul>
 					<li>MAPC & MAPC Municipalities</li>
 					<li>Massachusetts Department of Transportation (MassDOT)</li>
-					<li>Office of Geographic and Environmental Information (MassGIS)</li>
-					<li>Office of Geographic and Environmental Information (MassGIS)</li>
-					<li>Commonwealth of Massachusetts Executive Office of Energy and Environmental Affairs</li>
+					<li>Office of Geographic and Environmental Information (MassGIS), Commonwealth of Massachusetts Executive Office of Energy and Environmental Affairs</li>
 					<li>some trail data &copy; <a href="http://www.openstreetmap.org" title="OpenStreetMap">OpenStreetMap</a> contributors, CC-BY-SA.</li>
 				</ul>
 			</p>
