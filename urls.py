@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     # default
     (r'^$', 'geocomment.views.index'),
     
-    # mobile version
+    # force mobile version
     (r'^m/', direct_to_template, {'template': 'm/index.html'}),
     
     # add new feedback
