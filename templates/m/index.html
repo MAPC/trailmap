@@ -1,8 +1,10 @@
+{% load i18n %}
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <title>OpenLayers with jQuery Mobile</title>
+        <title>Greater Boston Cycling and Walking Map</title>
         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0;">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css">
@@ -51,7 +53,7 @@
             <a href="#moreinfopage" data-icon="arrow-r" data-role="button" class="ui-btn-right">more</a>
           </div>
           <div data-role="content">
-          	<h2>Map legend</h2>          	
+          	<h4>Greater Boston Cycling and Walking Map</h4>          	
           	<ul>
 				<li><img src="{{ STATIC_URL }}img/ct.png" alt="icon">Cycle track</li>
 				<li><img src="{{ STATIC_URL }}img/bl.png" alt="icon">Bike lane</li>
@@ -63,6 +65,7 @@
 				<li><img src="{{ STATIC_URL }}img/w.png" alt="icon">Water trail</li>
 				<li><img src="{{ STATIC_URL }}img/lw.png" alt="icon">Regional or local walking trail</li>
 				<li><img src="{{ STATIC_URL }}img/lb.png" alt="icon">Regional bicycle route</li>
+				<li><img src="{{ STATIC_URL }}img/p.png" alt="icon" />Proposed facility</li>
 			</ul>
 			<p id="disclaimer">Disclaimer: 
 						The data herein is provided as is and for information purposes only. MAPC does not guarantee its completeness or accuracy. 
