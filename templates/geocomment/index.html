@@ -40,11 +40,15 @@
 		float: right;
 		margin-top: 18px;
 	}
-	
+	#map_legend li {
+		display: inline;
+		list-style-type: none;
+		margin-right: 8px;
+		white-space: nowrap;
+	}
 	#map_legend img {
 		width: 12px;
 		height: 12px;
-		padding-left: 12px;
 	}
 	
 {% endblock %}
@@ -62,7 +66,7 @@
         	var lon = -71.08;
 			var lat = 42.35;
 			var zoom = 12;
-			var map, layer_osm, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional, layer_markers, layer_feedback;
+			var map, layer_switcher, layer_osm, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional, layer_markers, layer_feedback;
 			var proj_wgs84, proj_osm;
 			
 			// Projections
@@ -70,11 +74,12 @@
 			proj_osm = new OpenLayers.Projection("EPSG:900913"); // really? 
 			
 			// Map
+			var layer_switcher = new OpenLayers.Control.LayerSwitcher();
 			map = new OpenLayers.Map("map_canvas", {
 				controls: [
 					new OpenLayers.Control.Navigation(),
 					new OpenLayers.Control.PanZoom(),
-					new OpenLayers.Control.LayerSwitcher(),
+					layer_switcher,
 					new OpenLayers.Control.ScaleLine(),
 					new OpenLayers.Control.Attribution()
 				],
@@ -85,6 +90,9 @@
 				projection: proj_osm,
 				displayProjection: proj_wgs84
 			});
+			
+			// Usability issue: people didn't find the layer switcher.
+			layer_switcher.maximizeControl();
 			
 			// Base Layer
 			layer_paledawn = new OpenLayers.Layer.CloudMade("Pale Dawn", {
@@ -256,19 +264,19 @@
 			<button class="feedbacklink" href="#" title="Tell us where we should improve the map!">Feedback</button>
 		</div>
 		
-		<div id="map_legend">			
-			<img src="{{ STATIC_URL }}img/ct.png" alt="icon" />Cycle track
-			<img src="{{ STATIC_URL }}img/bl.png" alt="icon" />Bike lane
-			<img src="{{ STATIC_URL }}img/sl.png" alt="icon" />Shared lane
-			<img src="{{ STATIC_URL }}img/or.png" alt="icon" />On-road route
-			<img src="{{ STATIC_URL }}img/e.png" alt="icon" />Improved path 
-			<img src="{{ STATIC_URL }}img/u.png" alt="icon" />Unimproved path 
-			<img src="{{ STATIC_URL }}img/t.png" alt="icon" />Walking path or trail 
-			<img src="{{ STATIC_URL }}img/w.png" alt="icon" />Water trail 
-			<img src="{{ STATIC_URL }}img/lw.png" alt="icon" />Regional or local walking trail 
-			<img src="{{ STATIC_URL }}img/lb.png" alt="icon" />Regional bicycle route<br>
-			<img src="{{ STATIC_URL }}js/ol/img/layer-switcher-maximize.png" alt="icon" /> Layer Switcher (show and hide map layers)
-		</div>
+		<ul id="map_legend">			
+			<li><img src="{{ STATIC_URL }}img/ct.png" alt="icon" />Cycle track</li>
+			<li><img src="{{ STATIC_URL }}img/bl.png" alt="icon" />Bike lane</li>
+			<li><img src="{{ STATIC_URL }}img/sl.png" alt="icon" />Shared lane</li>
+			<li><img src="{{ STATIC_URL }}img/or.png" alt="icon" />On-road route</li>
+			<li><img src="{{ STATIC_URL }}img/e.png" alt="icon" />Improved path</li>
+			<li><img src="{{ STATIC_URL }}img/u.png" alt="icon" />Unimproved path</li>
+			<li><img src="{{ STATIC_URL }}img/t.png" alt="icon" />Walking path or trail</li>
+			<li><img src="{{ STATIC_URL }}img/w.png" alt="icon" />Water trail</li>
+			<li><img src="{{ STATIC_URL }}img/lw.png" alt="icon" />Regional or local walking trail</li>
+			<li><img src="{{ STATIC_URL }}img/lb.png" alt="icon" />Regional bicycle route</li>
+			<li><img src="{{ STATIC_URL }}img/p.png" alt="icon" />Proposed facility</li>
+		</ul>
 		
 {% endblock %}
 		
@@ -301,7 +309,7 @@
 			
 			</form>
 			
-			<img id="bikemap-tn" src="{{ STATIC_URL }}img/bikemap-tn.jpg" alt="Greater Boston Cycling and Walking Map" />
+			<a href="http://mapc.org/smart-growth/transportation/bike-ped-projects" title="MAPC Regional Bicycle and Pedestrian Projects"><img id="bikemap-tn" src="{{ STATIC_URL }}img/bikemap-tn.jpg" alt="Greater Boston Cycling and Walking Map" /></a>
 			
 			<p><h3>Welcome to MAPC's 2011 Greater Boston Cycling and Walking Map!</h3>
 				This map is the most comprehensive compilation of the regions walking and bicycling facilities ever prepared. 
