@@ -216,12 +216,9 @@
 			
 			<p class="large">{{ feedback.description }}</p>
 			
-			{% disqus_dev %}
-			{% set_disqus_developer 1 %}
-			
 			{% set_disqus_identifier "feedback_" feedback.id %}
-			{% set_disqus_url feedback.get_absolute_url %}
-			{% set_disqus_title "Feedback" feedback.id %}
+			{% set_disqus_url "http://trailmap.mapc.org" feedback.get_absolute_url %}
+			{% set_disqus_title "Feedback-" feedback.id %}
 			
 			{% disqus_show_comments %}
 			
