@@ -1,0 +1,4 @@
+Django==1.3
+South==0.7.3
+django-disqus==0.4.1
+psycopg2==2.4
