@@ -10,16 +10,16 @@ urlpatterns = patterns('',
     # url(r'^$', 'trailmap1.views.home', name='home'),
     # url(r'^trailmap/', include('trailmap.foo.urls')),
     # default
-    (r'^$', 'geocomment.views.index'),
+    (r'^$', 'trailmap.geocomment.views.index'),
     
     # force mobile version
     (r'^m/', direct_to_template, {'template': 'm/index.html'}),
     
     # add new feedback
-    (r'^feedback/new/', 'geocomment.views.index'),
+    (r'^feedback/new/', 'trailmap.geocomment.views.index'),
     
     # feedback detail page with comment stream
-    (r'^feedback/(?P<feedback_id>\d+)/$', 'geocomment.views.detail'),
+    (r'^feedback/(?P<feedback_id>\d+)/$', 'trailmap.geocomment.views.detail'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.utils.text import normalize_newlines
 import re
 
-from geocomment.models import Place, PlaceForm
+from trailmap.geocomment.models import Place, PlaceForm
 
 # Create your views here.
 

@@ -1,4 +1,4 @@
-from geocomment.models import Place
+from trailmap.geocomment.models import Place
 # from django.contrib import admin
 from django.contrib.gis import admin
 
