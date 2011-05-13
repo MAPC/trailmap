@@ -145,6 +145,7 @@
 			// Compose
 			map.addLayers([layer_paledawn, layer_osm, layer_toposm, layer_googsat, layer_regional, layer_walking, layer_bike, layer_markers]);
 			map.setCenter( new OpenLayers.LonLat(lon, lat).transform(proj_wgs84, proj_osm), zoom );		
+			map.addControl(new OpenLayers.Control.Permalink());
 			
 			// Map Functionality        	
             // add markers
