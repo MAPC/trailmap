@@ -11,9 +11,21 @@ body {
     text-align: center;
     padding: 5px 0;
 }
-.portrait, .portrait #mappage {
-    min-height: 0;
+
+.ui-bar-c {
+	border: 1px solid 		#B4C6D0;
+	background: 			#014991;
+	color: 					#fff;
+	text-shadow: 0 1px 1px 	#333;
+	background-image: -moz-linear-gradient(top, 
+							#B4C6D0,
+							#014991);
+	background-image: -webkit-gradient(linear,left top,left bottom,
+			color-stop(0, 	#B4C6D0),
+			color-stop(1, 	#014991));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#B4C6D0', EndColorStr='#014991')";
 }
+
 /*.portrait, .portrait .ui-page{*/
     /*min-height: 0;*/
 /*}*/
