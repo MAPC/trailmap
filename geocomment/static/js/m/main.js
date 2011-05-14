@@ -1,15 +1,10 @@
-// API key for http://openlayers.org. Please get your own at
-// http://bingmapsportal.com/ and use that instead.
-var apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf";
-
-// initialize map when page ready
-var map;
-var gg = new OpenLayers.Projection("EPSG:4326");
-var sm = new OpenLayers.Projection("EPSG:900913");
-
-var init = function (onSelectFeatureFunction) {
-
-    var vector = new OpenLayers.Layer.Vector("Vector Layer", {});
+$(document).ready(function() {
+	
+	var map;
+	var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
+	var proj_osm = new OpenLayers.Projection("EPSG:900913");
+	
+	var vector = new OpenLayers.Layer.Vector("My Location", {});
 
     var geolocate = new OpenLayers.Control.Geolocate({
         id: 'locate-control',
@@ -23,17 +18,15 @@ var init = function (onSelectFeatureFunction) {
     map = new OpenLayers.Map({
         div: "map",
         theme: null,
-        projection: sm,
-        units: "m",
         numZoomLevels: 18,
         maxResolution: 156543.0339,
         maxExtent: new OpenLayers.Bounds(
             -20037508.34, -20037508.34, 20037508.34, 20037508.34
         ),
-        // restrictedExtent: new OpenLayers.Bounds(-74, 41, -69, 43).transform(gg, sm),
+        restrictedExtent: new OpenLayers.Bounds(-74, 41, -69, 43).transform(proj_wgs84, proj_osm),
         units: "m",
-		// projection: sm,
-		// displayProjection: gg,
+		rojection: proj_osm,
+		displayProjection: proj_wgs84,
         controls: [
             new OpenLayers.Control.Attribution(),
             new OpenLayers.Control.TouchNavigation({
@@ -117,7 +110,7 @@ var init = function (onSelectFeatureFunction) {
 			),
             vector
         ],
-        center: new OpenLayers.LonLat(-71.08, 42.35).transform(gg, sm),
+        center: new OpenLayers.LonLat(-71.08, 42.35).transform(proj_wgs84, proj_osm),
         zoom: 12
     });
 
@@ -156,4 +149,96 @@ var init = function (onSelectFeatureFunction) {
     });
 
 
-};
+    // Start with the map page
+    if (window.location.hash && window.location.hash!='#mappage') {
+        $.mobile.changePage('mappage');
+    }
+
+    // fix height of content
+    function fixContentHeight() {
+        var footer = $("div[data-role='footer']:visible"),
+        content = $("div[data-role='content']:visible:visible"),
+        viewHeight = $(window).height(),
+        contentHeight = viewHeight - footer.outerHeight();
+
+        if ((content.outerHeight() + footer.outerHeight()) !== viewHeight) {
+            contentHeight -= (content.outerHeight() - content.height());
+            content.height(contentHeight);
+        }
+        if (window.map) {
+            map.updateSize();
+        }
+    }
+    $(window).bind("orientationchange resize pageshow", fixContentHeight);
+    fixContentHeight(); 
+
+    // Map zoom  
+    $("#plus").click(function(){
+        map.zoomIn();
+    });
+    $("#minus").click(function(){
+        map.zoomOut();
+    });
+    $("#locate").click(function(){
+        var control = map.getControlsBy("id", "locate-control")[0];
+        if (control.active) {
+            control.getCurrentLocation();
+        } else {
+            control.activate();
+        }
+    });
+
+    $('#layerslist').listview();
+    $('<li>', {
+            "data-role": "list-divider",
+            text: "Base Layers"
+        })
+        .appendTo('#layerslist');
+
+    var baseLayers = map.getLayersBy("isBaseLayer", true);
+    
+	$.each(baseLayers, function() {
+        addLayerToList(this);
+    });
+
+    $('<li>', {
+            "data-role": "list-divider",
+            text: "Overlay Layers"
+        })
+        .appendTo('#layerslist');
+    var overlayLayers = map.getLayersBy("isBaseLayer", false);
+    $.each(overlayLayers, function() {
+        addLayerToList(this);
+    });
+    $('#layerslist').listview('refresh');
+    
+    map.events.register("addlayer", this, function(e) {
+        addLayerToList(e.layer);
+    });
+
+});
+
+function addLayerToList(layer) {
+    var item = $('<li>', {
+            "data-icon": "check",
+            "class": layer.visibility ? "checked" : ""
+        })
+        .append($('<a />', {
+            text: layer.name
+        })
+            .click(function() {
+                $.mobile.changePage('mappage');
+                if (layer.isBaseLayer) {
+                    layer.map.setBaseLayer(layer);
+                } else {
+                    layer.setVisibility(!layer.getVisibility());
+                }
+            })
+        )
+        .appendTo('#layerslist');
+    layer.events.on({
+        'visibilitychanged': function() {
+            $(item).toggleClass('checked');
+        }
+    });
+}
