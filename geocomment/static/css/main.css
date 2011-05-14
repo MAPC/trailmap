@@ -1,0 +1,83 @@
+#header, #footer{
+	text-align: center;
+}
+
+#header {
+	padding-top: 18px;
+	width: 100%;
+	height: 60px;
+	background-color: #014991;
+	border-bottom: solid 1px #b4c6d0;
+}
+
+h1 a, h1 a:hover, h1 a:visited, h1 a:active {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+/* map */
+
+#map_canvas {
+	height: 500px;
+	width: 100%;
+	margin-bottom: 18px;
+}
+
+#map_legend {
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+#map_legend li {
+	display: inline;
+	list-style-type: none;
+	margin-right: 12px;
+	white-space: nowrap;
+}
+#map_legend img {
+	width: 12px;
+	height: 12px;
+}
+
+/* form */
+
+#feedbackform {
+	display: none;
+	margin-top: 18px;
+}
+
+div.feedbacklink button {
+	float: right;
+	margin-right: 4px;
+}
+
+#id_description {
+	width: 100%;
+	height: 80px;		
+}
+
+/* content */
+
+#disclaimer {
+	font-style: italic;
+}
+
+.facility {
+	color: #63a236;
+	font-weight: bold;
+}
+
+#bikemap-tn {
+	float: right;
+	margin-top: 18px;
+}
+
+/* thank you page */
+
+h2 {
+	text-align: center;
+}
+
+#thanks {
+	text-align: center;
+}
