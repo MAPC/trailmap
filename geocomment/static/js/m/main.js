@@ -57,11 +57,6 @@ $(document).ready(function() {
 					attribution: "<a href='http://toposm.com/'>TopOSM</a>"
 				}
 			),
-			new OpenLayers.Layer.Google("Google Satellite", {
-				type: google.maps.MapTypeId.SATELLITE, 
-				numZoomLevels: 22
-				}
-			),
 			new OpenLayers.Layer.WMS("Regional Networks",
 				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 				{ 
