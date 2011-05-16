@@ -11,11 +11,6 @@ Scope
 * Desktop and mobile optimized web interface
 * Map feedback functionality
 
-Dependencies
-============
-
-* GeoDjango
-
 MAPC
 ====
 
