@@ -53,7 +53,7 @@ $(document).ready(function() {
 				"http://toposm.com/ma/final/${z}/${x}/${y}.png",
 				{
 					transitionEffect: 'resize',
-					numZoomLevels: 16,
+					numZoomLevels: 17,
 					attribution: "<a href='http://toposm.com/'>TopOSM</a>"
 				}
 			),

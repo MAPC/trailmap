@@ -44,7 +44,7 @@ $(document).ready(function() {
 	layer_toposm = new OpenLayers.Layer.OSM("TopOSM", 
 		"http://toposm.com/ma/final/${z}/${x}/${y}.png",
 		{
-			numZoomLevels: 16,
+			numZoomLevels: 17,
 			attribution: "<a href='http://toposm.com/'>TopOSM</a>"
 		}
 	);		
