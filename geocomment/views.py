@@ -3,10 +3,13 @@ from django.shortcuts import render_to_response
 from django.utils.text import normalize_newlines
 import re
 
+from django.views.decorators.cache import never_cache
+
 from trailmap.geocomment.models import Place, PlaceForm
 
 # Create your views here.
 
+@never_cache 
 def index(request):
     
     client = mobile(request)
@@ -50,7 +53,7 @@ def detail(request, feedback_id):
                             {'feedback': feedback,
                              },
                             context_instance=RequestContext(request))
-    
+   
 def mobile(request):
     
     # http://djangosnippets.org/snippets/2228/
