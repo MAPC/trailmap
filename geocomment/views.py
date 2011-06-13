@@ -16,13 +16,14 @@ def index(request):
     
     if 'baseline' in client:
     
-        feedback = Place.objects.exclude(followup='c')
+        feedback = Place.objects.filter(followup='n')
         
         if request.method == 'POST':
             form = PlaceForm(request.POST)
             if form.is_valid():
                 entry = form.save(commit=False)
-                entry.ip = request.META['REMOTE_ADDR']  
+                entry.ip = request.META['REMOTE_ADDR']
+                entry.followup = entry.set_followup()  
                 # eliminate linebreaks
                 normalized_text = normalize_newlines(entry.description)            
                 entry.description = (normalized_text.replace('\n', ' '))     
