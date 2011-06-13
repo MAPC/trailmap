@@ -1,6 +1,8 @@
 from django.contrib.gis.db import models
 from django.forms import ModelForm, HiddenInput,  Textarea
 
+from django.contrib.gis.geos import GEOSGeometry
+
 # Create your models here.
 
 # workaround for South custom fields issues 
@@ -12,7 +14,7 @@ except ImportError:
 
 FOLLOWUP_CHOICES = (
     ('n', 'New'),
-    ('v', 'Verification'),
+    ('m', 'Moderate'),
     ('c', 'Completed'),
 )
 
@@ -26,14 +28,20 @@ class Place(models.Model):
     last_modified = models.DateTimeField(editable=False, auto_now=True)
     
     # GeoDjango
-    location = models.PointField(geography=True, blank=True, null=True, default='POINT(0 0)') # default SRS 4326
+    location = models.PointField(geography=True, blank=True, null=True, default='POINT (0 0)') # default SRS 4326
     objects = models.GeoManager()
     
     def __unicode__(self):
         return u'%s' % (self.id)
     
     def get_absolute_url(self):
-        return "/feedback/%i/" % self.id
+        return '/feedback/%i/' % self.id
+    
+    def set_followup(self):
+        if self.location == GEOSGeometry('POINT(0 0)'): #potential spam-bot submission
+            return 'm'
+        return 'n'
+            
 
 class PlaceForm(ModelForm):
     
