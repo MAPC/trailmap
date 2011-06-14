@@ -141,13 +141,28 @@ $(document).ready(function() {
 	}
 	
 	// Compose map
+	
 	$.trailmap.map.addLayers([layer_paledawn, layer_osm, layer_toposm, layer_googsat, layer_regional, layer_walking, layer_bike, $.trailmap.layer.markers]);
 	$.trailmap.map.setCenter( new OpenLayers.LonLat($.trailmap.lon, $.trailmap.lat).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), $.trailmap.zoom );	
 	$.trailmap.map.addControl(new OpenLayers.Control.Permalink());
 	
 	// UI
+	
 	$("div.baseLbl").html("Base Layers");
 	$("div.dataLbl").html("Cycling &amp; Walking");
+	
+	$("#largermapbutton").toggle(function() {
+		var map_height = $(window).height() - $("#header").height() - $("#map_legend").height() - 24;
+		$("#map_canvas").height(map_height);
+		$("#largermapbutton")
+			.text("Smaller Map")
+		 	.attr("title", "View smaller map!");
+	}, function() {
+  		$("#map_canvas").height(500);
+  		$("#largermapbutton")
+  			.text("Larger Map")
+  			.attr("title", "View larger map!");
+	});
 	
 	// Feedback
 	
@@ -183,15 +198,15 @@ $(document).ready(function() {
 		feedback_drag.activate();   
 	}
 	
-	$("button.feedbacklink").click(function() {
+	$("#feedbackbutton").click(function() {
 		$("#feedbackform").toggle("slow", function() {
-			$("button.feedbacklink").hide();
+			$("#feedbackbutton").hide();
 			$.trailmap.feedbackMarker();
 		});				
 	});
 	$("#cancel").click(function() {
 		$("#feedbackform").toggle("slow", function() {	
-			$("button.feedbacklink").show();		
+			$("#feedbackbutton").show();		
 			$.trailmap.map.removeLayer($.trailmap.layer.layer_feedback);
 		});				
 	});
