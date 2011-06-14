@@ -56,6 +56,22 @@ div.feedbacklink button {
 	height: 80px;		
 }
 
+#feedbackform_admin {
+	display: inline;
+}
+
+.error {
+	color: #8A1F11;
+    margin-bottom: 0px;
+    padding: 0px;
+    border: none;
+    background: none;
+}
+
+textarea.error {
+    border: 2px solid #8A1F11; 
+}
+
 /* content */
 
 #disclaimer {

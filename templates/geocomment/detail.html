@@ -4,6 +4,7 @@
 
 {% block javascript %}
 	
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/ol/OpenLayers.js"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script> 
 	<script type="text/javascript" src="{{ STATIC_URL }}js/cloudmade.js"></script>
@@ -12,7 +13,17 @@
 	<script type="text/javascript">
 		
 		$(document).ready(function() {
-
+			
+			{% if form %}
+			
+			$.trailmap.map.removeLayer($.trailmap.layer.markers);
+			$.trailmap.feedback.icon = "{{ STATIC_URL }}js/ol/img/marker-gold.png";
+			var edit_marker = new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm);
+			$.trailmap.feedbackMarker(edit_marker.lon, edit_marker.lat);
+			$.trailmap.map.setCenter( edit_marker, $.trailmap.zoom );
+			
+			{% else %}
+			
         	$.trailmap.lon = {{ feedback.location.x }};
 			$.trailmap.lat = {{ feedback.location.y }};
 			$.trailmap.zoom = 14;
@@ -24,6 +35,8 @@
 	        });
 
 			$.trailmap.map.setCenter( new OpenLayers.LonLat($.trailmap.lon, $.trailmap.lat).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), $.trailmap.zoom );
+			
+			{% endif %}
           
         });
     </script> 
@@ -54,7 +67,37 @@
 
 		<div id="content" class="prepend-2 span-20 append-2 prepend-top last">
 			
-			<p class="large">{{ feedback.description }}</p>
+			{% if form %}
+			
+			<form id="feedbackform_admin" action="/feedback/{{ feedback.id }}/update/" method="post">
+	
+				{% csrf_token %}
+					
+				<div>Please drag the yellow marker <img src="{{ STATIC_URL }}js/ol/img/marker-gold.png" height="18" alt="blue marker" /> to to adjust the location and use the form below to edit your feedback:</div>
+				
+				{{ form.location }}
+				
+				<div class="form-row">
+					{{ form.description }}
+				</div>
+				
+				<div class="form-row">
+					<span class="label">Your name (optional):</span> {{ form.user_name }}
+				</div>
+				
+				<div class="form-row">
+					<span class="label">Your email (optional):</span> {{ form.user_email }}
+				</div>
+		
+				<input type="submit" value="Edit Feedback" />
+			
+			</form>
+					
+			{% else %}
+			
+			<p>{{ feedback.description }}</p>
+			
+			{% endif %}
 			
 			{% set_disqus_identifier "feedback_" feedback.id %}
 			{% set_disqus_url "http://trailmap.mapc.org" feedback.get_absolute_url %}

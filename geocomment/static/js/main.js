@@ -135,8 +135,8 @@ $(document).ready(function() {
 	        currentPopup = this.popup;
 	        OpenLayers.Event.stop(evt);
 	    };
+	    
 	    marker.events.register("mousedown", feature, markerClick);
-
 	    $.trailmap.layer.markers.addMarker(marker);
 	}
 	
@@ -149,45 +149,53 @@ $(document).ready(function() {
 	$("div.baseLbl").html("Base Layers");
 	$("div.dataLbl").html("Cycling &amp; Walking");
 	
-	// Feedbackform
+	// Feedback
+	
+	$.trailmap.feedbackMarker = function (x, y) {
+		
+		// Add draggable marker/feature            		
+		var layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
+		layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
+		        graphicYOffset: -25,
+		        graphicXOffset: -13,
+		        externalGraphic: $.trailmap.feedback.icon,
+		        pointRadius: 13
+		    })
+	    );           		
+		
+		var x = x || $.trailmap.map.getCenter().lon;
+		var y = y || $.trailmap.map.getCenter().lat;
+		
+		var feedback_pt = new OpenLayers.Geometry.Point(x, y)
+		var feedback_feature = new OpenLayers.Feature.Vector(feedback_pt);
+		
+		layer_feedback.addFeatures([feedback_feature]);
+		$.trailmap.map.addLayer(layer_feedback);
+		
+		$.trailmap.map.addControl(new OpenLayers.Control.MousePosition());
+		var feedback_drag = new OpenLayers.Control.DragFeature(layer_feedback);
+		feedback_drag.onComplete = function(f) {            			
+			var feedback_lonlat = new OpenLayers.LonLat(feedback_feature.geometry.x, feedback_feature.geometry.y);
+			feedback_lonlat.transform($.trailmap.proj.osm, $.trailmap.proj.wgs84);            			
+			$("#id_location").val("POINT(" + feedback_lonlat.lon + " " + feedback_lonlat.lat + ")")					
+		}
+		$.trailmap.map.addControl(feedback_drag);
+		feedback_drag.activate();   
+	}
+	
 	$("button.feedbacklink").click(function() {
 		$("#feedbackform").toggle("slow", function() {
-			$("button.feedbacklink").unbind().hide();					
-
-    		// Add draggable marker/feature            		
-    		var layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
-			layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
-			        graphicYOffset: -25,
-			        graphicXOffset: -13,
-			        externalGraphic: $.trailmap.feedback.icon,
-			        pointRadius: 13
-			    })
-		    );           		
-
-    		var feedback_pt = new OpenLayers.Geometry.Point($.trailmap.map.getCenter().lon, $.trailmap.map.getCenter().lat)
-			var feedback_feature = new OpenLayers.Feature.Vector(feedback_pt);
-    		
-    		layer_feedback.addFeatures([feedback_feature]);
-			$.trailmap.map.addLayer(layer_feedback);
-    		
-    		$.trailmap.map.addControl(new OpenLayers.Control.MousePosition());
-    		var feedback_drag = new OpenLayers.Control.DragFeature(layer_feedback);
-    		feedback_drag.onComplete = function(f) {            			
-    			var feedback_lonlat = new OpenLayers.LonLat(feedback_feature.geometry.x, feedback_feature.geometry.y);
-    			feedback_lonlat.transform($.trailmap.proj.osm, $.trailmap.proj.wgs84);            			
-    			$("#id_location").val("POINT(" + feedback_lonlat.lon + " " + feedback_lonlat.lat + ")")						
-    		}
-    		$.trailmap.map.addControl(feedback_drag);
-    		feedback_drag.activate();            		
+			$("button.feedbacklink").unbind().hide();
+			
+			$.trailmap.feedbackMarker();
+			
 		});				
 	});
-	$("#feedbackform").submit(function() {
-		// simple validation
-		if (!$("#id_description").val()) {
-			alert("Please fill out the form.");
-		  	return false;
-		}
-	});
+	
+	// validation
+	$("#id_description").addClass("required");
+	$("#id_user_email").addClass("email");
+	$("#feedbackform, #feedbackform_admin").validate();
 
 });
 

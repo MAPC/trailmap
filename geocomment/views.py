@@ -1,11 +1,14 @@
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.text import normalize_newlines
 import re
 
 from django.views.decorators.cache import never_cache
 
+import trailmap.settings as settings
 from trailmap.geocomment.models import Place, PlaceForm
+
+import hashlib
 
 # Create your views here.
 
@@ -24,6 +27,7 @@ def index(request):
                 entry = form.save(commit=False)
                 entry.ip = request.META['REMOTE_ADDR']
                 entry.followup = entry.set_followup()  
+                entry.admin_key = hashlib.md5(str(entry.location.x) + str(entry.location.y) + settings.FEEDBACK_SECRET).hexdigest()[:12]
                 # eliminate linebreaks
                 normalized_text = normalize_newlines(entry.description)            
                 entry.description = (normalized_text.replace('\n', ' '))     
@@ -48,10 +52,33 @@ def index(request):
                                    context_instance=RequestContext(request))
         
     
-def detail(request, feedback_id):
-    feedback = Place.objects.get(pk=feedback_id)    
+def detail(request, feedback_id=None, admin_key=None):
+    
+    feedback = get_object_or_404(Place, pk=feedback_id)
+    
+    # edit existing feedback
+    if admin_key == feedback.admin_key:
+        form = PlaceForm(instance=feedback)
+    else:
+        form = None
+    
+    if request.method == 'POST':
+        form = PlaceForm(request.POST, instance=feedback)
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.ip = request.META['REMOTE_ADDR']
+            # eliminate linebreaks
+            normalized_text = normalize_newlines(entry.description)            
+            entry.description = (normalized_text.replace('\n', ' '))     
+            entry.save()
+            return render_to_response('geocomment/thanks.html',
+                                      {'feedback': entry,
+                                       'task_msg': 'updated'},
+                                      context_instance=RequestContext(request))
+        
     return render_to_response('geocomment/detail.html',
                             {'feedback': feedback,
+                             'form': form,
                              },
                             context_instance=RequestContext(request))
    

@@ -20,6 +20,8 @@ urlpatterns = patterns('',
     
     # feedback detail page with comment stream
     (r'^feedback/(?P<feedback_id>\d+)/$', 'trailmap.geocomment.views.detail'),
+    (r'^feedback/(?P<feedback_id>\d+)/update/$', 'trailmap.geocomment.views.detail'),
+    (r'^feedback/(?P<feedback_id>\d+)/(?P<admin_key>\w+)/$', 'trailmap.geocomment.views.detail'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
