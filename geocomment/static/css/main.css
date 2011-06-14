@@ -102,5 +102,6 @@ h2 {
 /* Facebook */
 
 .fb_iframe_widget {
-	text-align: right;
+	margin-top: -10px;
+	float: right;
 }
