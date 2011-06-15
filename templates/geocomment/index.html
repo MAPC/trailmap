@@ -13,6 +13,7 @@
 		
 		$(document).ready(function() {
 			
+			$.trailmap.staticurl = "{{ STATIC_URL }}";
 			$.trailmap.feedback.icon = "{{ STATIC_URL }}js/ol/img/marker-gold.png";
 	
 			{% if feedback %}{% for marker in feedback %}
@@ -32,9 +33,7 @@
 		<div id="map_canvas"></div>
 		
 		<div id="maptools">
-			
 			<button id="feedbackbutton" href="#" title="Tell us where we should improve the map!">Feedback</button>
-			<button id="largermapbutton" href="#" title="View larger map!">Larger Map</button>
 		</div>
 		
 		<ul id="map_legend">			

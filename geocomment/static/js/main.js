@@ -20,7 +20,7 @@ $(document).ready(function() {
 		controls: [
 			new OpenLayers.Control.Navigation(),
 			new OpenLayers.Control.PanZoom(),
-			layer_switcher,
+			layer_switcher, 
 			new OpenLayers.Control.ScaleLine(),
 			new OpenLayers.Control.Attribution()
 		],
@@ -36,25 +36,25 @@ $(document).ready(function() {
 	layer_switcher.maximizeControl();
 	
 	// Base Layer
-	layer_paledawn = new OpenLayers.Layer.CloudMade("Pale Dawn", {
+	$.trailmap.layer.paledawn = new OpenLayers.Layer.CloudMade("Pale Dawn", {
 		key: '7a0df0d49fb14d27b35022fcb6b49d6d',
 		styleId: 998
 	});
-	layer_osm = new OpenLayers.Layer.OSM("OpenStreetMap");
-	layer_toposm = new OpenLayers.Layer.OSM("TopOSM", 
+	$.trailmap.layer.osm = new OpenLayers.Layer.OSM("OpenStreetMap");
+	$.trailmap.layer.toposm = new OpenLayers.Layer.OSM("TopOSM", 
 		"http://toposm.com/ma/final/${z}/${x}/${y}.png",
 		{
 			numZoomLevels: 17,
 			attribution: "<a href='http://toposm.com/'>TopOSM</a>"
 		}
 	);		
-	layer_googsat = new OpenLayers.Layer.Google("Google Satellite", {
+	$.trailmap.layer.googsat = new OpenLayers.Layer.Google("Google Satellite", {
 		type: google.maps.MapTypeId.SATELLITE, 
 		numZoomLevels: 22
 	});
 	
 	// Overlays
-	layer_regional = new OpenLayers.Layer.WMS("Regional Networks",
+	$.trailmap.layer.regional = new OpenLayers.Layer.WMS("Regional Networks",
 		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 		{ 
 			layers: "MAPC:bikeped_facilities",
@@ -69,7 +69,7 @@ $(document).ready(function() {
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
 	);
-	layer_walking = new OpenLayers.Layer.WMS("Paths and Trails",
+	$.trailmap.layer.walking = new OpenLayers.Layer.WMS("Paths and Trails",
 		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 		{ 
 			layers: "MAPC:bikeped_facilities",
@@ -83,7 +83,7 @@ $(document).ready(function() {
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
 	);
-	layer_bike = new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
+	$.trailmap.layer.bike = new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
 		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 		{ 
 			layers: "MAPC:bikeped_facilities",
@@ -104,6 +104,7 @@ $(document).ready(function() {
     );
 	
 	// Map Functionality
+	
 	$.trailmap.map.events.on({
 		"moveend": function(e) {
 			var mapcenter = $.trailmap.map.getCenter().transform($.trailmap.proj.osm, $.trailmap.proj.wgs84);
@@ -142,8 +143,10 @@ $(document).ready(function() {
 	
 	// Compose map
 	
-	$.trailmap.map.addLayers([layer_paledawn, layer_osm, layer_toposm, layer_googsat, layer_regional, layer_walking, layer_bike, $.trailmap.layer.markers]);
-	$.trailmap.map.setCenter( new OpenLayers.LonLat($.trailmap.lon, $.trailmap.lat).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), $.trailmap.zoom );	
+  	for (var i in $.trailmap.layer) {
+  		$.trailmap.map.addLayer($.trailmap.layer[i]);
+	}
+  	$.trailmap.map.setCenter( new OpenLayers.LonLat($.trailmap.lon, $.trailmap.lat).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), $.trailmap.zoom );	
 	$.trailmap.map.addControl(new OpenLayers.Control.Permalink());
 	
 	// UI
@@ -151,23 +154,25 @@ $(document).ready(function() {
 	$("div.baseLbl").html("Base Layers");
 	$("div.dataLbl").html("Cycling &amp; Walking");
 	
-	$("#largermapbutton").toggle(function() {
+	
+	// larger map button
+	var largerMap = function () {
 		var map_height = $(window).height() - $("#header").height() - $("#map_legend").height() - 24;
 		$("#map_canvas").height(map_height);
-		$("#largermapbutton")
-			.text("Smaller Map")
-		 	.attr("title", "View smaller map!");
-	}, function() {
-  		$("#map_canvas").height(500);
-  		$("#largermapbutton")
-  			.text("Larger Map")
-  			.attr("title", "View larger map!");
+	}
+	var panel = new OpenLayers.Control.Panel();
+	var largermapButton = new OpenLayers.Control.Button({
+		title: "View larger map",
+		displayClass: "largermapButtonDisplay",
+		trigger: largerMap
 	});
-	
+	$("div.largermapButtonDisplayItemInactive")
+	panel.addControls([largermapButton]);
+    $.trailmap.map.addControl(panel);
+
 	// Feedback
 	
-	$.trailmap.feedbackMarker = function (x, y) {
-		
+	$.trailmap.feedbackMarker = function (x, y) {		
 		// Add draggable marker/feature            		
 		$.trailmap.layer.layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
 		$.trailmap.layer.layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
@@ -211,11 +216,11 @@ $(document).ready(function() {
 		});				
 	});
 	
-	// validation
+	// Feedback form validation
 	$("#id_description").addClass("required");
 	$("#id_user_email").addClass("email");
 	$("#feedbackform, #feedbackform_admin").validate();
-
+	
 });
 
 
