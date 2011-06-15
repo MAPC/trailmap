@@ -95,7 +95,7 @@
 					
 			{% else %}
 			
-			<p>{{ feedback.description }}</p>
+			<p>{% if feedback.user_name %}<strong>{{ feedback.user_name }}</strong>: {% endif %}{{ feedback.description }}</p>
 			
 			{% endif %}
 			
