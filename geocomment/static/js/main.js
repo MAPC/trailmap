@@ -20,7 +20,7 @@ $(document).ready(function() {
 		controls: [
 			new OpenLayers.Control.Navigation(),
 			new OpenLayers.Control.PanZoom(),
-			layer_switcher,
+			layer_switcher, 
 			new OpenLayers.Control.ScaleLine(),
 			new OpenLayers.Control.Attribution()
 		],
@@ -36,25 +36,25 @@ $(document).ready(function() {
 	layer_switcher.maximizeControl();
 	
 	// Base Layer
-	layer_paledawn = new OpenLayers.Layer.CloudMade("Pale Dawn", {
+	$.trailmap.layer.paledawn = new OpenLayers.Layer.CloudMade("Pale Dawn", {
 		key: '7a0df0d49fb14d27b35022fcb6b49d6d',
 		styleId: 998
 	});
-	layer_osm = new OpenLayers.Layer.OSM("OpenStreetMap");
-	layer_toposm = new OpenLayers.Layer.OSM("TopOSM", 
+	$.trailmap.layer.osm = new OpenLayers.Layer.OSM("OpenStreetMap");
+	$.trailmap.layer.toposm = new OpenLayers.Layer.OSM("TopOSM", 
 		"http://toposm.com/ma/final/${z}/${x}/${y}.png",
 		{
 			numZoomLevels: 17,
 			attribution: "<a href='http://toposm.com/'>TopOSM</a>"
 		}
 	);		
-	layer_googsat = new OpenLayers.Layer.Google("Google Satellite", {
+	$.trailmap.layer.googsat = new OpenLayers.Layer.Google("Google Satellite", {
 		type: google.maps.MapTypeId.SATELLITE, 
 		numZoomLevels: 22
 	});
 	
 	// Overlays
-	layer_regional = new OpenLayers.Layer.WMS("Regional Networks",
+	$.trailmap.layer.regional = new OpenLayers.Layer.WMS("Regional Networks",
 		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 		{ 
 			layers: "MAPC:bikeped_facilities",
@@ -69,7 +69,7 @@ $(document).ready(function() {
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
 	);
-	layer_walking = new OpenLayers.Layer.WMS("Paths and Trails",
+	$.trailmap.layer.walking = new OpenLayers.Layer.WMS("Paths and Trails",
 		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 		{ 
 			layers: "MAPC:bikeped_facilities",
@@ -83,7 +83,7 @@ $(document).ready(function() {
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
 	);
-	layer_bike = new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
+	$.trailmap.layer.bike = new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
 		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
 		{ 
 			layers: "MAPC:bikeped_facilities",
@@ -104,6 +104,7 @@ $(document).ready(function() {
     );
 	
 	// Map Functionality
+	
 	$.trailmap.map.events.on({
 		"moveend": function(e) {
 			var mapcenter = $.trailmap.map.getCenter().transform($.trailmap.proj.osm, $.trailmap.proj.wgs84);
@@ -117,7 +118,8 @@ $(document).ready(function() {
 	    var feature = new OpenLayers.Feature($.trailmap.layer.markers, ll); 
 	    feature.closeBox = true;
 	    feature.popupClass = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-			"autoSize": true
+			"autoSize": true,
+			"maxSize": new OpenLayers.Size(400,300)
 		});
 	    feature.data.popupContentHTML = popupContent;
 	    feature.data.overflow = "auto";
@@ -135,60 +137,91 @@ $(document).ready(function() {
 	        currentPopup = this.popup;
 	        OpenLayers.Event.stop(evt);
 	    };
+	    
 	    marker.events.register("mousedown", feature, markerClick);
-
 	    $.trailmap.layer.markers.addMarker(marker);
 	}
 	
 	// Compose map
-	$.trailmap.map.addLayers([layer_paledawn, layer_osm, layer_toposm, layer_googsat, layer_regional, layer_walking, layer_bike, $.trailmap.layer.markers]);
-	$.trailmap.map.setCenter( new OpenLayers.LonLat($.trailmap.lon, $.trailmap.lat).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), $.trailmap.zoom );	
+	
+  	for (var i in $.trailmap.layer) {
+  		$.trailmap.map.addLayer($.trailmap.layer[i]);
+	}
+  	$.trailmap.map.setCenter( new OpenLayers.LonLat($.trailmap.lon, $.trailmap.lat).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), $.trailmap.zoom );	
 	$.trailmap.map.addControl(new OpenLayers.Control.Permalink());
 	
 	// UI
+	
 	$("div.baseLbl").html("Base Layers");
 	$("div.dataLbl").html("Cycling &amp; Walking");
 	
-	// Feedbackform
-	$("button.feedbacklink").click(function() {
+	
+	// larger map button
+	var largerMap = function () {
+		var map_height = $(window).height() - $("#header").height() - $("#map_legend").height() - 24;
+		$("#map_canvas").height(map_height);
+	}
+	var panel = new OpenLayers.Control.Panel();
+	var largermapButton = new OpenLayers.Control.Button({
+		title: "View larger map",
+		displayClass: "largermapButtonDisplay",
+		trigger: largerMap
+	});
+	$("div.largermapButtonDisplayItemInactive")
+	panel.addControls([largermapButton]);
+    $.trailmap.map.addControl(panel);
+
+	// Feedback
+	
+	$.trailmap.feedbackMarker = function (x, y) {		
+		// Add draggable marker/feature            		
+		$.trailmap.layer.layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
+		$.trailmap.layer.layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
+		        graphicYOffset: -25,
+		        graphicXOffset: -13,
+		        externalGraphic: $.trailmap.staticurl + "js/ol/img/marker-gold.png",
+		        pointRadius: 13
+		    })
+	    );           		
+		
+		var x = x || $.trailmap.map.getCenter().lon;
+		var y = y || $.trailmap.map.getCenter().lat;
+		
+		var feedback_pt = new OpenLayers.Geometry.Point(x, y)
+		var feedback_feature = new OpenLayers.Feature.Vector(feedback_pt);
+		
+		$.trailmap.layer.layer_feedback.addFeatures([feedback_feature]);
+		$.trailmap.map.addLayer($.trailmap.layer.layer_feedback);
+		
+		$.trailmap.map.addControl(new OpenLayers.Control.MousePosition());
+		var feedback_drag = new OpenLayers.Control.DragFeature($.trailmap.layer.layer_feedback);
+		feedback_drag.onComplete = function(f) {            			
+			var feedback_lonlat = new OpenLayers.LonLat(feedback_feature.geometry.x, feedback_feature.geometry.y);
+			feedback_lonlat.transform($.trailmap.proj.osm, $.trailmap.proj.wgs84);            			
+			$("#id_location").val("POINT(" + feedback_lonlat.lon + " " + feedback_lonlat.lat + ")")					
+		}
+		$.trailmap.map.addControl(feedback_drag);
+		feedback_drag.activate();   
+	}
+	
+	$("#feedbackbutton").click(function() {
 		$("#feedbackform").toggle("slow", function() {
-			$("button.feedbacklink").unbind().hide();					
-
-    		// Add draggable marker/feature            		
-    		var layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
-			layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
-			        graphicYOffset: -25,
-			        graphicXOffset: -13,
-			        externalGraphic: $.trailmap.feedback.icon,
-			        pointRadius: 13
-			    })
-		    );           		
-
-    		var feedback_pt = new OpenLayers.Geometry.Point($.trailmap.map.getCenter().lon, $.trailmap.map.getCenter().lat)
-			var feedback_feature = new OpenLayers.Feature.Vector(feedback_pt);
-    		
-    		layer_feedback.addFeatures([feedback_feature]);
-			$.trailmap.map.addLayer(layer_feedback);
-    		
-    		$.trailmap.map.addControl(new OpenLayers.Control.MousePosition());
-    		var feedback_drag = new OpenLayers.Control.DragFeature(layer_feedback);
-    		feedback_drag.onComplete = function(f) {            			
-    			var feedback_lonlat = new OpenLayers.LonLat(feedback_feature.geometry.x, feedback_feature.geometry.y);
-    			feedback_lonlat.transform($.trailmap.proj.osm, $.trailmap.proj.wgs84);            			
-    			$("#id_location").val("POINT(" + feedback_lonlat.lon + " " + feedback_lonlat.lat + ")")						
-    		}
-    		$.trailmap.map.addControl(feedback_drag);
-    		feedback_drag.activate();            		
+			$("#feedbackbutton").hide();
+			$.trailmap.feedbackMarker();
 		});				
 	});
-	$("#feedbackform").submit(function() {
-		// simple validation
-		if (!$("#id_description").val()) {
-			alert("Please fill out the form.");
-		  	return false;
-		}
+	$("#cancel").click(function() {
+		$("#feedbackform").toggle("slow", function() {	
+			$("#feedbackbutton").show();		
+			$.trailmap.map.removeLayer($.trailmap.layer.layer_feedback);
+		});				
 	});
-
+	
+	// Feedback form validation
+	$("#id_description").addClass("required");
+	$("#id_user_email").addClass("email");
+	$("#feedbackform, #feedbackform_admin").validate();
+	
 });
 
 

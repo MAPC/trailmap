@@ -21,6 +21,10 @@ FOLLOWUP_CHOICES = (
 class Place(models.Model):
     
     description = models.TextField()
+    user_name = models.CharField(max_length=50, blank=True, null=True)
+    user_email = models.EmailField(max_length=75, blank=True, null=True)
+    
+    admin_key = models.CharField(max_length=12, blank=True, null=True)
     
     followup = models.CharField(max_length=1, default='n', choices=FOLLOWUP_CHOICES)
     
@@ -47,7 +51,7 @@ class PlaceForm(ModelForm):
     
     class Meta:
         model = Place
-        exclude = ('ip', 'followup',)
+        exclude = ('ip', 'followup', 'admin_key')
         widgets = {
             'description': Textarea(),
             'location': HiddenInput(),         

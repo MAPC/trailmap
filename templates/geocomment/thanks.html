@@ -6,7 +6,9 @@
 
 <h2>Thank you!</h2>
 
-<p class="large" id="thanks"><a href="/feedback/{{ feedback.id }}">Your feedback</a> has been added to our system.</p>
+<p class="large" id="thanks"><a href="/feedback/{{ feedback.id }}">Your feedback</a> has been {{ task_msg|default:"added to our system" }}.</p>
+
+<p class="large" id="thanks">Please use your <a href="/feedback/{{ feedback.id }}/{{ feedback.admin_key }}">Secret Admin Link</a> for any future edits of your feedback.</p>
 
 </div>
 
