@@ -118,7 +118,8 @@ $(document).ready(function() {
 	    var feature = new OpenLayers.Feature($.trailmap.layer.markers, ll); 
 	    feature.closeBox = true;
 	    feature.popupClass = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-			"autoSize": true
+			"autoSize": true,
+			"maxSize": new OpenLayers.Size(400,300)
 		});
 	    feature.data.popupContentHTML = popupContent;
 	    feature.data.overflow = "auto";
