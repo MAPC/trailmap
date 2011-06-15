@@ -17,7 +17,8 @@
 			{% if form %}
 			
 			$.trailmap.map.removeLayer($.trailmap.layer.markers);
-			$.trailmap.feedback.icon = "{{ STATIC_URL }}js/ol/img/marker-gold.png";
+			$.trailmap.staticurl = "{{ STATIC_URL }}";
+			
 			var edit_marker = new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm);
 			$.trailmap.feedbackMarker(edit_marker.lon, edit_marker.lat);
 			$.trailmap.map.setCenter( edit_marker, $.trailmap.zoom );

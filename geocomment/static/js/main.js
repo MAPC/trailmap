@@ -179,7 +179,7 @@ $(document).ready(function() {
 		$.trailmap.layer.layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
 		        graphicYOffset: -25,
 		        graphicXOffset: -13,
-		        externalGraphic: $.trailmap.feedback.icon,
+		        externalGraphic: $.trailmap.staticurl + "js/ol/img/marker-gold.png",
 		        pointRadius: 13
 		    })
 	    );           		
