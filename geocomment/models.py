@@ -1,6 +1,4 @@
 from django.contrib.gis.db import models
-from django.forms import ModelForm, HiddenInput,  Textarea
-
 from django.contrib.gis.geos import GEOSGeometry
 
 # Create your models here.
@@ -45,14 +43,3 @@ class Place(models.Model):
         if self.location == GEOSGeometry('POINT(0 0)'): #potential spam-bot submission
             return 'm'
         return 'n'
-            
-
-class PlaceForm(ModelForm):
-    
-    class Meta:
-        model = Place
-        exclude = ('ip', 'followup', 'admin_key')
-        widgets = {
-            'description': Textarea(),
-            'location': HiddenInput(),         
-        }

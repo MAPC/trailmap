@@ -6,7 +6,8 @@ import re
 from django.views.decorators.cache import never_cache
 
 import trailmap.settings as settings
-from trailmap.geocomment.models import Place, PlaceForm
+from trailmap.geocomment.models import Place
+from trailmap.geocomment.forms import PlaceForm
 
 import hashlib
 
@@ -42,6 +43,7 @@ def index(request):
                                   {'form': form,
                                    'feedback': feedback,
                                    'client': client,
+                                   'MATH_CAPTCHA_QUESTION': settings.MATH_CAPTCHA_QUESTION,
                                    }, 
                                    context_instance=RequestContext(request))
         
