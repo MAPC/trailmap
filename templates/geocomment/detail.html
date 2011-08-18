@@ -89,6 +89,10 @@
 				<div class="form-row">
 					<span class="label">Your email (optional):</span> {{ form.user_email }}
 				</div>
+				
+				<div class="form-row">
+					<span class="label">{{ MATH_CAPTCHA_QUESTION }}</span> {{ form.math_captcha_field }}
+				</div>
 		
 				<input type="submit" value="Edit Feedback" />
 			
