@@ -41,6 +41,7 @@
           
         });
     </script> 
+	<script type="text/javascript" src="{{ STATIC_URL }}js/util.js"></script>
 	
 {% endblock %}
 	
@@ -88,6 +89,11 @@
 				
 				<div class="form-row">
 					<span class="label">Your email (optional):</span> {{ form.user_email }}
+				</div>
+				
+				<div class="form-row">
+					<span class="label">{{ MATH_CAPTCHA_QUESTION }}</span> {{ form.math_captcha_field }}
+					<div id="captchaerror">{{ form.math_captcha_field.errors }}</div>
 				</div>
 		
 				<input type="submit" value="Edit Feedback" />

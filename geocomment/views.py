@@ -81,6 +81,7 @@ def detail(request, feedback_id=None, admin_key=None):
     return render_to_response('geocomment/detail.html',
                             {'feedback': feedback,
                              'form': form,
+                             'MATH_CAPTCHA_QUESTION': settings.MATH_CAPTCHA_QUESTION,
                              },
                             context_instance=RequestContext(request))
    

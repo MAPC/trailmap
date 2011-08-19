@@ -108,7 +108,7 @@ $(document).ready(function() {
 	$.trailmap.map.events.on({
 		"moveend": function(e) {
 			var mapcenter = $.trailmap.map.getCenter().transform($.trailmap.proj.osm, $.trailmap.proj.wgs84);
-			$("#id_location").val("POINT(" + mapcenter.lon + " " + mapcenter.lat + ")")
+			$("#id_location").val("POINT(" + mapcenter.lon + " " + mapcenter.lat + ")");
 		}
 	});
 	
@@ -143,6 +143,12 @@ $(document).ready(function() {
 	}
 	
 	// Compose map
+	
+	if ($("#id_location").val() !== "POINT (0 0)") {
+		var form_location = new OpenLayers.Geometry.fromWKT($("#id_location").val());
+		$.trailmap.lon = form_location.x;
+		$.trailmap.lat = form_location.y;
+	}
 	
   	for (var i in $.trailmap.layer) {
   		$.trailmap.map.addLayer($.trailmap.layer[i]);
@@ -221,6 +227,8 @@ $(document).ready(function() {
 	$("#id_description").addClass("required");
 	$("#id_user_email").addClass("email");
 	$("#feedbackform, #feedbackform_admin").validate();
+	
+
 	
 });
 
