@@ -1,11 +1,11 @@
 from django.template import RequestContext
+from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.text import normalize_newlines
 import re
 
 from django.views.decorators.cache import never_cache
 
-import trailmap.settings as settings
 from trailmap.geocomment.models import Place
 from trailmap.geocomment.forms import PlaceForm
 
