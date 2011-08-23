@@ -2,6 +2,9 @@ from django.template import RequestContext
 from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.text import normalize_newlines
+from django.http import HttpResponse
+from django.utils import simplejson
+
 import re
 
 from django.views.decorators.cache import never_cache
@@ -53,6 +56,20 @@ def index(request):
                                   {}, 
                                    context_instance=RequestContext(request))
         
+
+def data(request):
+    """
+    Returns a GeoJSON representation of new feedback.
+    """
+    places = Place.objects.filter(followup='n')
+    features = []
+    for place in places:
+        properties = dict(username=place.user_name, description=place.description, url=place.get_absolute_url())
+        geometry = simplejson.loads(place.location.geojson)
+        feature = dict(type='Feature', geometry=geometry, properties=properties)
+        features.append(feature)
+    response = dict(type='FeatureCollection', features=features)
+    return HttpResponse(simplejson.dumps(response), mimetype='application/json')
     
 def detail(request, feedback_id=None, admin_key=None):
     
