@@ -4,7 +4,8 @@
 {% block javascript %}
 	
 	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
-	<script type="text/javascript" src="{{ STATIC_URL }}js/ol/OpenLayers.js"></script>
+	<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/ol/OpenLayers-full.js"></script> -->
+	<script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/cloudmade.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/main.js"></script>
@@ -14,11 +15,8 @@
 		$(document).ready(function() {
 			
 			$.trailmap.staticurl = "{{ STATIC_URL }}";
+			$.trailmap.loadFeedback("/feedback/data/");
 	
-			{% if feedback %}{% for marker in feedback %}
-		    $.trailmap.addMarker(new OpenLayers.LonLat({{ marker.location.x }},{{ marker.location.y }}).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), "{% if marker.user_name %}<strong>{{ marker.user_name }}</strong>: {% endif %}{{ marker.description }}<br><a href='{{ marker.get_absolute_url }}'>Add New Comment</a>");
-		    {% endfor %}{% endif %}
-
 		});
 		
     </script> 
