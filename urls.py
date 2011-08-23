@@ -24,8 +24,11 @@ urlpatterns = patterns('',
     (r'^feedback/(?P<feedback_id>\d+)/(?P<admin_key>\w+)/$', 'trailmap.geocomment.views.detail'),
     
     # trigger manual hubway update
-    (r'^hubway/', 'trailmap.hubway.views.update'),
-
+    (r'^hubway/update/', 'trailmap.hubway.views.update'),
+    # stationstatus geojson
+    (r'^hubway/status/', 'trailmap.hubway.views.status'),
+    # station geojson
+    (r'^hubway/stations/', 'trailmap.hubway.views.stations'),
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
