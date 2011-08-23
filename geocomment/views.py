@@ -22,8 +22,6 @@ def index(request):
     client = mobile(request)
     
     if 'baseline' in client:
-    
-        feedback = Place.objects.filter(followup='n')
         
         if request.method == 'POST':
             form = PlaceForm(request.POST)
@@ -44,7 +42,6 @@ def index(request):
             
         return render_to_response('geocomment/index.html', 
                                   {'form': form,
-                                   'feedback': feedback,
                                    'client': client,
                                    'MATH_CAPTCHA_QUESTION': settings.MATH_CAPTCHA_QUESTION,
                                    }, 
@@ -61,14 +58,31 @@ def data(request):
     """
     Returns a GeoJSON representation of new feedback.
     """
-    places = Place.objects.filter(followup='n')
+    feedback_all = Place.objects.filter(followup='n')
     features = []
-    for place in places:
-        properties = dict(username=place.user_name, description=place.description, url=place.get_absolute_url())
-        geometry = simplejson.loads(place.location.geojson)
+    for feedback in feedback_all:
+        properties = dict(username=feedback.user_name, description=feedback.description, url=feedback.get_absolute_url())
+        geometry = simplejson.loads(feedback.location.geojson)
         feature = dict(type='Feature', geometry=geometry, properties=properties)
         features.append(feature)
     response = dict(type='FeatureCollection', features=features)
+    return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+
+def detail_data(request, feedback_id):
+    """
+    Returns a GeoJSON representation for a feedback comment.
+    """
+    try:
+        feedback = Place.objects.get(pk=feedback_id)
+        features = []
+        properties = dict(username=feedback.user_name, description=feedback.description, url=feedback.get_absolute_url())
+        geometry = simplejson.loads(feedback.location.geojson)
+        feature = dict(type='Feature', geometry=geometry, properties=properties)
+        features.append(feature)
+        response = dict(type='FeatureCollection', features=features)
+    except:
+        response = dict(result=False)
+        
     return HttpResponse(simplejson.dumps(response), mimetype='application/json')
     
 def detail(request, feedback_id=None, admin_key=None):

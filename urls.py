@@ -22,7 +22,8 @@ urlpatterns = patterns('',
     (r'^feedback/(?P<feedback_id>\d+)/$', 'trailmap.geocomment.views.detail'),
     (r'^feedback/(?P<feedback_id>\d+)/update/$', 'trailmap.geocomment.views.detail'),
     (r'^feedback/(?P<feedback_id>\d+)/(?P<admin_key>\w+)/$', 'trailmap.geocomment.views.detail'),
-    (r'^feedback/data/', 'trailmap.geocomment.views.data'),
+    (r'^feedback/data/$', 'trailmap.geocomment.views.data'),
+    (r'^feedback/data/(?P<feedback_id>\d+)/$', 'trailmap.geocomment.views.detail_data'),
     
     # trigger manual hubway update
     (r'^hubway/update/', 'trailmap.hubway.views.update'),
