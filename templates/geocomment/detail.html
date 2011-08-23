@@ -5,7 +5,8 @@
 {% block javascript %}
 	
 	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
-	<script type="text/javascript" src="{{ STATIC_URL }}js/ol/OpenLayers.js"></script>
+	<!-- FIXME: there is something funky going on with my build on this page; hotlinking until I know more -->
+	<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script> 
 	<script type="text/javascript" src="{{ STATIC_URL }}js/cloudmade.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/main.js"></script>
@@ -16,7 +17,7 @@
 			
 			{% if form %}
 			
-			$.trailmap.map.removeLayer($.trailmap.layer.markers);
+			$.trailmap.map.removeLayer($.trailmap.layer.feedback);
 			$.trailmap.staticurl = "{{ STATIC_URL }}";
 			
 			var edit_marker = new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm);
@@ -24,14 +25,14 @@
 			$.trailmap.map.setCenter( edit_marker, $.trailmap.zoom );
 			
 			{% else %}
-			
+			$.trailmap.staticurl = "{{ STATIC_URL }}";
         	$.trailmap.lon = {{ feedback.location.x }};
 			$.trailmap.lat = {{ feedback.location.y }};
 			$.trailmap.zoom = 14;
         	
-            $.trailmap.addMarker(new OpenLayers.LonLat({{ feedback.location.x }},{{ feedback.location.y }}).transform($.trailmap.proj.wgs84, $.trailmap.proj.osm), "{{ feedback.description }}");
-
-			$.trailmap.layer.markers.setVisibility({
+        	$.trailmap.loadFeedback("/feedback/data/{{ feedback.id }}/");
+        	
+			$.trailmap.layer.feedback.setVisibility({
 	        	visibility: true
 	        });
 

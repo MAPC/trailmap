@@ -9,7 +9,9 @@ $(document).ready(function() {
 		proj : {
 			wgs84 : new OpenLayers.Projection("EPSG:4326"),
 			osm : new OpenLayers.Projection("EPSG:900913") // really?
-		}
+		},
+		feedback: {},
+		hubway: {}
 	};
 	
 	var layer_switcher, layer_osm, layer_googsat, layer_paledawn, layer_bikeped, layer_walking, layer_regional, layer_feedback;
@@ -90,18 +92,33 @@ $(document).ready(function() {
 			format: "image/png",
 			styles: "Bicycle Facilities", 
 			transparent: true
-			
 		},
 		{
 			isBaseLayer: false,
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
 	);
-	$.trailmap.layer.markers = new OpenLayers.Layer.Markers( "Feedback",
-        {
-        	visibility: false
-        }
-    );
+	$.trailmap.layer.hubway = new OpenLayers.Layer.Vector("Hubway Stations", {
+		visibility: false,
+		attribution: "<a href='http://www.thehubway.com'>Hubway</a>",
+		styleMap: new OpenLayers.StyleMap({
+			externalGraphic: "/static/img/hubway.png", //FIXME: should use $.trailmap.staticurl
+			graphicOpacity: 1.0,
+			graphicWith: 20,
+			graphicHeight: 26,
+			graphicYOffset: -26
+        })
+	});
+	$.trailmap.layer.feedback = new OpenLayers.Layer.Vector("Feedback", {
+		visibility: false,
+		styleMap: new OpenLayers.StyleMap({
+			externalGraphic: "/static/img/comment.png", //FIXME: should use $.trailmap.staticurl
+			graphicOpacity: 1.0,
+			graphicWith: 22,
+			graphicHeight: 26,
+			graphicYOffset: -26
+        })
+	});
 	
 	// Map Functionality
 	
@@ -112,37 +129,90 @@ $(document).ready(function() {
 		}
 	});
 	
-	// add markers            
-	$.trailmap.addMarker = function (ll, popupContent) {
-
-	    var feature = new OpenLayers.Feature($.trailmap.layer.markers, ll); 
-	    feature.closeBox = true;
-	    feature.popupClass = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-			"autoSize": true,
-			"maxSize": new OpenLayers.Size(400,300)
-		});
-	    feature.data.popupContentHTML = popupContent;
-	    feature.data.overflow = "auto";
-
-	    var marker = feature.createMarker();
-
-	    var markerClick = function (evt) {
-	        if (this.popup == null) {
-	            this.popup = this.createPopup(this.closeBox);
-	            $.trailmap.map.addPopup(this.popup);
-	            this.popup.show();
-	        } else {
-	            this.popup.toggle();
-	        }
-	        currentPopup = this.popup;
-	        OpenLayers.Event.stop(evt);
-	    };
-	    
-	    marker.events.register("mousedown", feature, markerClick);
-	    $.trailmap.layer.markers.addMarker(marker);
+	// parse GeoJSON helper
+	$.trailmap.parseGeoJSON = function (data) {
+		// GeoJSON with custom projections
+        var parser = new OpenLayers.Format.GeoJSON({
+    		'externalProjection': $.trailmap.proj.wgs84,
+    		'internalProjection': $.trailmap.proj.osm
+  		});
+        return parser.read(data);
+    }
+	
+	// unselect selected feature
+	$.trailmap.onFeatureUnselect = function (feature) {
+		$.trailmap.map.removePopup(feature.popup);
+		feature.popup.destroy();
+		feature.popup = null;
+	}
+	
+	// Custom Hubway popup and feature select
+	$.trailmap.hubway.onFeatureSelect = function (feature) {
+        $.trailmap.selectedFeature = feature;
+        var feature_center = feature.geometry.getBounds().getCenterLonLat();
+        var popup = new OpenLayers.Popup.FramedCloud("Hubway", 
+			feature_center,
+			null,
+			"<div class='popup'><b>" + feature.attributes.name + "</b><br>Available Bikes: " + feature.attributes.bikes + "<br>Empty Docks: " + feature.attributes.emptydocks + "</div>",
+			null, true, $.trailmap.hubway.onPopupClose);
+        feature.popup = popup;
+        $.trailmap.map.addPopup(popup);
+        // $.trailmap.map.panTo(feature_center);
+	}
+	$.trailmap.hubway.onPopupClose = function (evt) {
+		$.trailmap.hubway.selectControl.unselect($.trailmap.selectedFeature);
+	}
+	
+	// Custom Feedback popup and feature select
+	$.trailmap.feedback.onFeatureSelect = function (feature) {
+        $.trailmap.selectedFeature = feature;
+        var username = feature.attributes.username ? "<b>" + feature.attributes.username + ":</b> " : "";
+        var feature_center = feature.geometry.getBounds().getCenterLonLat();
+        var popup = new OpenLayers.Popup.FramedCloud("Feedback", 
+			feature_center,
+			null,
+			"<div class='popup'>" + username + feature.attributes.description + "<br><a href='" + feature.attributes.url + "'>Discuss</a></div>",
+			null, true, $.trailmap.feedback.onPopupClose);
+        feature.popup = popup;
+        $.trailmap.map.addPopup(popup);
+        // $.trailmap.map.panTo(feature_center);
+	}
+	$.trailmap.feedback.onPopupClose = function (evt) {
+		$.trailmap.feedback.selectControl.unselect($.trailmap.selectedFeature);
 	}
 	
 	// Compose map
+	
+	// load Hubway stations with status
+	$.get("/hubway/status/", function(data) {
+		var hubwaystations = $.trailmap.parseGeoJSON(data);
+    	$.trailmap.layer.hubway.addFeatures(hubwaystations);
+    	// add popup window on click (feature select)
+    	$.trailmap.hubway.selectControl = new OpenLayers.Control.SelectFeature( $.trailmap.layer.hubway,
+		{
+			onSelect: $.trailmap.hubway.onFeatureSelect, 
+			onUnselect: $.trailmap.onFeatureUnselect
+		});
+    	$.trailmap.map.addControl($.trailmap.hubway.selectControl);
+    	$.trailmap.hubway.selectControl.activate();  
+	});
+	
+	// load feedback data, receives data url from page
+	$.trailmap.loadFeedback = function(url) {
+		$.get(url, function(data) {
+			var feedback = $.trailmap.parseGeoJSON(data);
+	    	$.trailmap.layer.feedback.addFeatures(feedback);
+	    	// add popup window on click (feature select)
+	    	
+	    	$.trailmap.feedback.selectControl = new OpenLayers.Control.SelectFeature( $.trailmap.layer.feedback,
+			{
+				onSelect: $.trailmap.feedback.onFeatureSelect, 
+				onUnselect: $.trailmap.onFeatureUnselect
+			});
+	    	$.trailmap.map.addControl($.trailmap.feedback.selectControl);
+	    	$.trailmap.feedback.selectControl.activate();  
+		});
+	}
 	
 	if ($("#id_location").val() !== "POINT (0 0)") {
 		var form_location = new OpenLayers.Geometry.fromWKT($("#id_location").val());
