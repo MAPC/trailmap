@@ -297,8 +297,6 @@ $(document).ready(function() {
 	$("#id_user_email").addClass("email");
 	$("#feedbackform, #feedbackform_admin").validate();
 	
-
-	
 });
 
 
