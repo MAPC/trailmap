@@ -203,7 +203,6 @@ $(document).ready(function() {
 			var feedback = $.trailmap.parseGeoJSON(data);
 	    	$.trailmap.layer.feedback.addFeatures(feedback);
 	    	// add popup window on click (feature select)
-	    	
 	    	$.trailmap.feedback.selectControl = new OpenLayers.Control.SelectFeature( $.trailmap.layer.feedback,
 			{
 				onSelect: $.trailmap.feedback.onFeatureSelect, 
@@ -214,7 +213,7 @@ $(document).ready(function() {
 		});
 	}
 	
-	if ($("#id_location").val() !== "POINT (0 0)") {
+	if ($("#id_location").val() !== "POINT (0 0)" && $("#id_location").val() !== undefined) {
 		var form_location = new OpenLayers.Geometry.fromWKT($("#id_location").val());
 		$.trailmap.lon = form_location.x;
 		$.trailmap.lat = form_location.y;
