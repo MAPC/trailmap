@@ -112,11 +112,11 @@ $(document).ready(function() {
 	$.trailmap.layer.feedback = new OpenLayers.Layer.Vector("Feedback", {
 		visibility: false,
 		styleMap: new OpenLayers.StyleMap({
-			externalGraphic: "/static/img/comment.png", //FIXME: should use $.trailmap.staticurl
+			externalGraphic: "/static/img/icon-conversation-blue.png", //FIXME: should use $.trailmap.staticurl
 			graphicOpacity: 1.0,
-			graphicWith: 22,
-			graphicHeight: 26,
-			graphicYOffset: -26
+			graphicWith: 32,
+			graphicHeight: 37,
+			graphicYOffset: -37
         })
 	});
 	
@@ -203,7 +203,6 @@ $(document).ready(function() {
 			var feedback = $.trailmap.parseGeoJSON(data);
 	    	$.trailmap.layer.feedback.addFeatures(feedback);
 	    	// add popup window on click (feature select)
-	    	
 	    	$.trailmap.feedback.selectControl = new OpenLayers.Control.SelectFeature( $.trailmap.layer.feedback,
 			{
 				onSelect: $.trailmap.feedback.onFeatureSelect, 
@@ -214,7 +213,7 @@ $(document).ready(function() {
 		});
 	}
 	
-	if ($("#id_location").val() !== "POINT (0 0)") {
+	if ($("#id_location").val() !== "POINT (0 0)" && $("#id_location").val() !== undefined) {
 		var form_location = new OpenLayers.Geometry.fromWKT($("#id_location").val());
 		$.trailmap.lon = form_location.x;
 		$.trailmap.lat = form_location.y;
@@ -253,10 +252,10 @@ $(document).ready(function() {
 		// Add draggable marker/feature            		
 		$.trailmap.layer.layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
 		$.trailmap.layer.layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
-		        graphicYOffset: -25,
-		        graphicXOffset: -13,
-		        externalGraphic: $.trailmap.staticurl + "js/ol/img/marker-gold.png",
-		        pointRadius: 13
+		        graphicYOffset: -37,
+		        graphicXOffset: -16,
+		        externalGraphic: $.trailmap.staticurl + "img/icon-conversation-green.png", // switch
+		        pointRadius: 18
 		    })
 	    );           		
 		
@@ -297,8 +296,6 @@ $(document).ready(function() {
 	$("#id_description").addClass("required");
 	$("#id_user_email").addClass("email");
 	$("#feedbackform, #feedbackform_admin").validate();
-	
-
 	
 });
 
