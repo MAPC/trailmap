@@ -112,11 +112,11 @@ $(document).ready(function() {
 	$.trailmap.layer.feedback = new OpenLayers.Layer.Vector("Feedback", {
 		visibility: false,
 		styleMap: new OpenLayers.StyleMap({
-			externalGraphic: "/static/img/comment.png", //FIXME: should use $.trailmap.staticurl
+			externalGraphic: "/static/img/icon-conversation-blue.png", //FIXME: should use $.trailmap.staticurl
 			graphicOpacity: 1.0,
-			graphicWith: 22,
-			graphicHeight: 26,
-			graphicYOffset: -26
+			graphicWith: 32,
+			graphicHeight: 37,
+			graphicYOffset: -37
         })
 	});
 	
@@ -252,10 +252,10 @@ $(document).ready(function() {
 		// Add draggable marker/feature            		
 		$.trailmap.layer.layer_feedback = new OpenLayers.Layer.Vector("Your Feedback");
 		$.trailmap.layer.layer_feedback.styleMap = new OpenLayers.StyleMap(new OpenLayers.Style({				        
-		        graphicYOffset: -25,
-		        graphicXOffset: -13,
-		        externalGraphic: $.trailmap.staticurl + "js/ol/img/marker-gold.png",
-		        pointRadius: 13
+		        graphicYOffset: -37,
+		        graphicXOffset: -16,
+		        externalGraphic: $.trailmap.staticurl + "img/icon-conversation-green.png", // switch
+		        pointRadius: 18
 		    })
 	    );           		
 		
