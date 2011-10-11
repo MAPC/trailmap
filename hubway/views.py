@@ -70,7 +70,8 @@ def status(request):
     
     for station in stations:
         # get current stationstatus
-        stationstatus = Stationstatus.objects.filter(station=station).order_by(-id)[0]
+
+        stationstatus = Stationstatus.objects.filter(station=station).order_by('-id')[0]
         
         properties = dict(name=station.name, bikes=stationstatus.nbBikes, emptydocks=stationstatus.nbEmptyDocks)
         geometry = simplejson.loads(station.location.geojson)
