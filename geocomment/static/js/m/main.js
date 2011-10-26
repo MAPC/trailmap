@@ -57,52 +57,28 @@ $(document).ready(function() {
 					attribution: "<a href='http://toposm.com/'>TopOSM</a>"
 				}
 			),
-			new OpenLayers.Layer.WMS("Regional Networks",
-				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
-				{ 
-					layers: "MAPC:bikeped_facilities",
-					format: "image/png",
-					styles: "Regional Networks", 
-					transparent: true
-					
-				},
-				{
-					isBaseLayer: false,
-					transitionEffect: 'resize',
-					visibility: false,
-					attribution: "<a href='http://mapc.org/'>MAPC</a>"
-				}
-			),
-			new OpenLayers.Layer.WMS("Paths and Trails",
-				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
-				{ 
-					layers: "MAPC:bikeped_facilities",
-					format: "image/png",
-					styles: "Walking Facilities", 
-					transparent: true
-					
-				},
-				{
-					isBaseLayer: false,
-					transitionEffect: 'resize',
-					attribution: "<a href='http://mapc.org/'>MAPC</a>"
-				}
-			),			
-			new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
-				"http://geonode.mapc.org/geoserver-geonode-dev/wms",
-				{ 
-					layers: "MAPC:bikeped_facilities",
-					format: "image/png",
-					styles: "Bicycle Facilities", 
-					transparent: true
-					
-				},
-				{
-					isBaseLayer: false,
-					transitionEffect: 'resize',
-					attribution: "<a href='http://mapc.org/'>MAPC</a>"
-				}
-			),
+			new OpenLayers.Layer.XYZ("Regional Networks",
+                "http://tiles.mapc.org/bikeped-regional/${z}/${x}/${y}.png",
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    attribution: "<a href='http://mapc.org/'>MAPC</a>"
+                }
+            ),
+			new OpenLayers.Layer.XYZ("Paths and Trails",
+                "http://tiles.mapc.org/bikeped-paths/${z}/${x}/${y}.png",
+                {
+                    isBaseLayer: false,
+                    attribution: "<a href='http://mapc.org/'>MAPC</a>"
+                }
+            ),			
+			new OpenLayers.Layer.XYZ("Bicycle Facilities (on-road)",
+                "http://tiles.mapc.org/bikeped-onroad/${z}/${x}/${y}.png",
+                {
+                    isBaseLayer: false,
+                    attribution: "<a href='http://mapc.org/'>MAPC</a>"
+                }
+            ),
             vector
         ],
         center: new OpenLayers.LonLat(-71.08, 42.35).transform(proj_wgs84, proj_osm),
