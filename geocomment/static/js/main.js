@@ -57,7 +57,7 @@ $(document).ready(function() {
 	
 	// Overlays
 	$.trailmap.layer.regional = new OpenLayers.Layer.XYZ("Regional Networks",
-		"http://tiles.mapc.org/regional/${z}/${x}/${y}.png",
+		"http://tiles.mapc.org/bikeped-regional/${z}/${x}/${y}.png",
 		{
 			isBaseLayer: false,
 			visibility: false,
@@ -65,14 +65,14 @@ $(document).ready(function() {
 		}
 	)
 	$.trailmap.layer.walking = new OpenLayers.Layer.XYZ("Paths and Trails",
-		"http://tiles.mapc.org/paths/${z}/${x}/${y}.png",
+		"http://tiles.mapc.org/bikeped-paths/${z}/${x}/${y}.png",
 		{
 			isBaseLayer: false,
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
 	)
 	$.trailmap.layer.bike = new OpenLayers.Layer.XYZ("Bicycle Facilities (on-road)",
-		"http://tiles.mapc.org/onroad/${z}/${x}/${y}.png",
+		"http://tiles.mapc.org/bikeped-onroad/${z}/${x}/${y}.png",
 		{
 			isBaseLayer: false,
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
