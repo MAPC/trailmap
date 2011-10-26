@@ -1,0 +1,60 @@
+{
+  "bounds": [
+    -180,
+    -85.05112877980659,
+    180,
+    85.05112877980659
+  ],
+  "center": [
+    -71.18126213550558,
+    42.27903928674729,
+    10
+  ],
+  "format": "png",
+  "interactivity": false,
+  "minzoom": 0,
+  "maxzoom": 22,
+  "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
+  "Stylesheet": [
+    "regional.mss"
+  ],
+  "Layer": [
+    {
+      "name": "aqueducts",
+      "id": "aqueducts",
+      "srs": "+proj=lcc +lat_1=42.68333333333333 +lat_2=41.71666666666667 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
+      "class": "",
+      "Datasource": {
+        "table": "bikeped_facilities_aqueducts",
+        "key_field": "",
+        "geometry_field": "",
+        "extent": "",
+        "type": "postgis",
+        "dbname": "trailmap",
+        "host": "localhost",
+        "port": "5432",
+        "user": "trailmap",
+        "id": "aqueducts",
+        "project": "trailmap-regional"
+      }
+    },
+    {
+      "name": "bikeped",
+      "id": "bikeped",
+      "srs": "+proj=lcc +lat_1=42.68333333333333 +lat_2=41.71666666666667 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs",
+      "class": "regional",
+      "Datasource": {
+        "table": "(select the_geom, path_type, category, route, name\nfrom bikeped_facilities\nwhere route = 'long-distance'\n) as regional",
+        "key_field": "",
+        "geometry_field": "",
+        "extent": "",
+        "type": "postgis",
+        "dbname": "trailmap",
+        "host": "localhost",
+        "port": "5432",
+        "user": "trailmap"
+      }
+    }
+  ],
+  "name": "Trailmap - Regional Networks"
+}
