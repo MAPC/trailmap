@@ -56,48 +56,30 @@ $(document).ready(function() {
 	});
 	
 	// Overlays
-	$.trailmap.layer.regional = new OpenLayers.Layer.WMS("Regional Networks",
-		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
-		{ 
-			layers: "MAPC:bikeped_facilities",
-			format: "image/png",
-			styles: "Regional Networks", 
-			transparent: true
-			
-		},
+	$.trailmap.layer.regional = new OpenLayers.Layer.XYZ("Regional Networks",
+		"http://tiles.mapc.org/regional/${z}/${x}/${y}.png",
 		{
 			isBaseLayer: false,
 			visibility: false,
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
-	);
-	$.trailmap.layer.walking = new OpenLayers.Layer.WMS("Paths and Trails",
-		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
-		{ 
-			layers: "MAPC:bikeped_facilities",
-			format: "image/png",
-			styles: "Walking Facilities", 
-			transparent: true
-			
-		},
+	)
+	$.trailmap.layer.walking = new OpenLayers.Layer.XYZ("Paths and Trails",
+		"http://tiles.mapc.org/paths/${z}/${x}/${y}.png",
 		{
 			isBaseLayer: false,
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
-	);
-	$.trailmap.layer.bike = new OpenLayers.Layer.WMS("Bicycle Facilities (on-road)",
-		"http://geonode.mapc.org/geoserver-geonode-dev/wms",
-		{ 
-			layers: "MAPC:bikeped_facilities",
-			format: "image/png",
-			styles: "Bicycle Facilities", 
-			transparent: true
-		},
+	)
+	$.trailmap.layer.bike = new OpenLayers.Layer.XYZ("Bicycle Facilities (on-road)",
+		"http://tiles.mapc.org/onroad/${z}/${x}/${y}.png",
 		{
 			isBaseLayer: false,
 			attribution: "<a href='http://mapc.org/'>MAPC</a>"
 		}
-	);
+	)
+
+
 	$.trailmap.layer.hubway = new OpenLayers.Layer.Vector("Hubway Stations", {
 		visibility: false,
 		attribution: "<a href='http://www.thehubway.com'>Hubway</a>",
