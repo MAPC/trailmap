@@ -2,6 +2,11 @@ from trailmap.hubway.models import Station, Stationstatus
 # from django.contrib import admin
 from django.contrib.gis import admin
 
+# GeoAdmin overloads
+admin.GeoModelAdmin.default_lon = -7915039
+admin.GeoModelAdmin.default_lat = 5216500 
+admin.GeoModelAdmin.default_zoom = 12
+
 class StationAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'installDate', 'terminalName',)
     
