@@ -1,4 +1,4 @@
-from trailmap.hubway.models import Station, Stationstatus
+from hubway.models import Station, Stationstatus
 # from django.contrib import admin
 from django.contrib.gis import admin
 

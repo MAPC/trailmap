@@ -1,6 +1,0 @@
-[submodule "geocomment/static/css/blueprint-css"]
-	path = geocomment/static/css/blueprint-css
-	url = git://github.com/joshuaclayton/blueprint-css.git
-[submodule "geocomment/static/js/ol/theme"]
-	path = geocomment/static/js/ol/theme
-	url = git@github.com:cspanring/openlayers_themes.git

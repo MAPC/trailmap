@@ -7,7 +7,7 @@ import urllib2
 import datetime
 
 # import trailmap.settings as settings
-from trailmap.hubway.models import Station, Stationstatus
+from hubway.models import Station, Stationstatus
 
 
 class Command(BaseCommand):

@@ -2,14 +2,6 @@ from django.contrib.gis.db import models
 
 # Create your models here.
 
-# south introspection rules 
-try:
-    from south.modelsinspector import add_introspection_rules
-    add_introspection_rules([], ['^django\.contrib\.gis\.db\.models\.fields\.PointField'])
-except ImportError:
-    pass
-
-
 class Station(models.Model):
     """
     A subset of Hubway's public data schema:
@@ -30,6 +22,10 @@ class Station(models.Model):
             <nbEmptyDocks>11</nbEmptyDocks>
         </station>
     </stations>
+
+    Note: Hubway doesn't use station.id as unique identifier, but station.name. 
+    If a station is removed, it can happen that the station.id is re-used for another, new station.
+
     """
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -77,5 +73,3 @@ class Stationstatus(models.Model):
     
     class Meta:
         verbose_name_plural = 'Stationstatuses'
-    
-    

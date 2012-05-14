@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.management import call_command
 from django.utils import simplejson
 
-from trailmap.hubway.models import Station, Stationstatus
+from hubway.models import Station, Stationstatus
 
 # Create your views here.
 

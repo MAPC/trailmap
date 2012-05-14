@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Greater Boston Cycling and Walking Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Trailmap" />
+    <meta name="keywords" content="Boston, Trails, Bicycle, Pedestrian, Facilities, Paths, Bike Lanes, Shared Lanes, Networks, Cycle Tracks" />
+    <meta name="author" content="MAPC" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/leaflet/leaflet.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="{{ STATIC_URL }}lib/leaflet/leaflet.ie.css" /><![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ STATIC_URL }}img/touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ STATIC_URL }}img/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ STATIC_URL }}img/apple-touch-icon-114x114.png">
+
+    <!-- Le styles -->
+    <link href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <style type="text/css">
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        overflow:hidden;
+      }
+      a, .leaflet-container a {
+        color: #014991;
+      }
+      #map {
+        margin-top: 40px;
+        width:100%;
+      }
+      .mapc-logo {
+        position: absolute;
+        left: 10px;
+        bottom: 2px;
+        z-index: 100;
+      }
+      .navbar .brand {
+        font-size: 24px;
+        font-weight: bold;
+        color: #fff;
+      }
+      .navbar .nav > li > a {
+        padding: 12px 10px 10px;
+      }
+      .navbar .btn, .navbar .btn-group {
+        margin-top: 8px;
+      }
+      .navbar-inner {
+        background-color: #014991;
+        background-image: -moz-linear-gradient(top, #0060bf, #014991); /* FF3.6+ */
+        background-image: -ms-linear-gradient(top, #0060bf, #014991); /* IE10+ */
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0060bf), to(#014991)); /* Chrome,Safari4+ */
+        background-image: -webkit-linear-gradient(top, #0060bf, #014991); /* Chrome10+,Safari5.1+ */
+        background-image: -o-linear-gradient(top, #0060bf, #014991); /* Opera 11.10+ */
+        background-image: linear-gradient(top, #0060bf, #014991); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0060bf', endColorstr='#014991', GradientType=0); /* IE6-9 */
+        background-repeat: repeat-x;
+      }
+      .navbar .nav > li > a {
+        color: #fff;
+      }
+
+      .leaflet-top .leaflet-control {
+        margin-top: 50px;
+      }
+      .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: #f7f7f7;
+      }
+      .mylocation {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin-left: 10px;
+        margin-top: 55px;
+        padding: 5px;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 7px;
+        -moz-border-radius: 7px;
+        -webkit-border-radius: 7px;
+        color: rgba(255, 255, 255, 1);
+        z-index: 100;
+      }
+      .mylocation a {
+        background-color: rgba(255, 255, 255, 0.75);
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-image: url({{ STATIC_URL }}img/location.png);
+        display: block;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        width: 19px;
+        height: 19px;
+      }
+      .mylocation a:hover {
+        background-color: #fff;
+      }
+
+      .leaflet-control-layers-base input, .leaflet-control-layers-overlays input {
+        float: left;
+        margin-right: 6px;
+      }
+
+      .leaflet-popup-content {
+        min-width: 120px;
+      }
+
+      .map-cover {
+        float: right;
+      }
+      .disclaimer {
+        font-style: italic;
+      }
+
+      .legend .grouphead {
+        font-weight: bold;
+      }
+      .legend .layername {
+        padding-left: 16px;
+      }
+      .legend .layersymbol {
+        font-weight: bold;
+        text-align: center;
+      }
+      .legend .layersymbol.rw, .legend .layername.rw { color: #cade6f; }
+      .legend .layersymbol.rb, .legend .layername.rb { color: #ffdb48; }
+      .legend .layersymbol.ct, .legend .layername.ct { color: #7f3193; }
+      .legend .layersymbol.bl, .legend .layername.bl { color: #0874b9; }
+      .legend .layersymbol.sl, .legend .layername.sl { color: #82c5ec; }
+      .legend .layersymbol.or, .legend .layername.or { color: #9dce6b; }
+      .legend .layersymbol.ip, .legend .layername.ip { color: #229848; }
+      .legend .layersymbol.up, .legend .layername.up { color: #845723; }
+      .legend .layersymbol.p, .legend .layername.p { color: #db813f; }
+      .legend .layersymbol.wt, .legend .layername.wt { color: #49c9f5; }
+
+      .feedback-popup input, .feedback-popup textarea {
+        margin: 2px 0;
+      }
+      .feedback-popup .btn {
+        margin-right: 4px;
+      }
+      .sm li {
+        width: 100px;
+        padding-top: 12px;
+      }
+
+      /* Responsive design
+      -------------------------------------------------- */
+
+      @media (min-width: 980px) {
+        .navbar .brand {
+          font-size: 20px;
+        }
+      }
+      @media (min-width: 1200px) {
+        .navbar .brand {
+          font-size: 24px;
+        }
+        .navbar .nav > li > a {
+          padding-top: 10px;
+        }
+      }
+
+    </style>
+
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5547782-15']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+  </head>
+
+  <body>
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '153635518039921', // App ID
+          channelUrl : '//trailmap.mapc.org/channel.html', // Channel File
+          status     : true, // check login status
+          cookie     : true, // enable cookies to allow the server to access the session
+          xfbml      : true  // parse XFBML
+        });
+
+        // tracking Facebook
+        FB.Event.subscribe('edge.create', function(targetUrl) {
+          _gaq.push(['_trackSocial', 'facebook', 'like', targetUrl]);
+        });
+        FB.Event.subscribe('edge.remove', function(targetUrl) {
+          _gaq.push(['_trackSocial', 'facebook', 'unlike', targetUrl]);
+        });
+      };
+
+      // Load the SDK Asynchronously
+      (function(d){
+         var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+         js = d.createElement('script'); js.id = id; js.async = true;
+         js.src = "//connect.facebook.net/en_US/all.js";
+         d.getElementsByTagName('head')[0].appendChild(js);
+       }(document));
+    </script>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Greater Boston Cycling and Walking Map</a>
+          
+            <ul class="nav">
+              <li><a data-toggle="modal" href="#legendModal">Map Legend</a></li>
+              <li><a data-toggle="modal" href="#aboutModal">About</a></li>
+              <li><a data-toggle="modal" class="feedback" href="javascript:void(0)"><strong>Add Feedback</strong></a></li>
+            </ul>
+            <ul class="sm nav pull-right">
+              <li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://trailmap.mapc.org" data-text="I'm exploring bike and walking paths in Metro Boston!" data-via="MAPCMetroBoston" data-hashtags="MAPCTrailmap">Tweet</a>
+                <script>
+                window.twttr = (function (d,s,id) {
+                  var t, js, fjs = d.getElementsByTagName(s)[0];
+                  if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
+                  js.src="//platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs);
+                  return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
+                }(document, "script", "twitter-wjs"));
+
+                    // tracking Twitter
+                    function extractParamFromUri(uri, paramName) {
+                      if (!uri) {
+                        return;
+                      }
+                      var regex = new RegExp('[\\?&#]' + paramName + '=([^&#]*)');
+                      var params = regex.exec(uri);
+                      if (params != null) {
+                        return unescape(params[1]);
+                      }
+                      return;
+                    }
+                    function trackTwitter(intent_event) {
+                    if (intent_event) {
+                      var opt_pagePath;
+                      if (intent_event.target && intent_event.target.nodeName == 'IFRAME') {
+                            opt_target = extractParamFromUri(intent_event.target.src, 'url');
+                      }
+                      _gaq.push(['_trackSocial', 'twitter', 'tweet', opt_pagePath]);
+                    }
+                    }
+                    //Wrap event bindings - Wait for async js to load
+                    twttr.ready(function (twttr) {
+                        //event bindings
+                        twttr.events.bind('tweet', trackTwitter);
+                    });
+                </script></li>
+              <li><div class="fb-like" data-href="http://trailmap.mapc.org" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div></li>
+            </ul>
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="modal hide fade" id="legendModal">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Map Legend</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table legend">
+        <thead>
+          <tr>
+            <th>Map features</th>
+            <th class="layersymbol">Proposed</th>
+            <th class="layersymbol">Existing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="grouphead" colspan="3">Bicycle Facilities</td>
+          </tr>
+          <tr>
+            <td class="layername ct">Cycle Track</td>
+            <td class="layersymbol ct">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol ct">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="layername bl">Bike Lane</td>
+            <td class="layersymbol bl">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol bl">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="layername sl">Shared Lane</td>
+            <td class="layersymbol sl">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol sl">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="layername or">On-Road Route</td>
+            <td class="layersymbol or">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol or">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="grouphead" colspan="3">Shared-use paths (multi-use)</td>
+          </tr>
+          <tr>
+            <td class="layername ip">Improved Path</td>
+            <td class="layersymbol ip">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol ip">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="layername up">Unimproved Path</td>
+            <td class="layersymbol up">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol up">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="grouphead" colspan="3">Walking Facilities</td>
+          </tr>
+          <tr>
+            <td class="layername p">Walking path or trail</td>
+            <td class="layersymbol p">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol p">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="grouphead" colspan="3">Water Facilities</td>
+          </tr>
+          <tr>
+            <td class="layername wt">Water trail</td>
+            <td class="layersymbol wt">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol wt">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="grouphead" colspan="3">Regional networks</td>
+          </tr>
+          <tr>
+            <td class="layername rw">Regional or local walking trail</td>
+            <td class="layersymbol rw">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol rw">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="layername rb">Regional bicycle route</td>
+            <td class="layersymbol rb">&ndash;&nbsp;&ndash;</td>
+            <td class="layersymbol rb">&ndash;&ndash;&ndash;</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="modal hide fade" id="aboutModal">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Welcome to MAPC's 2012<br>Greater Boston Cycling and Walking Map!</h3>
+      </div>
+      <div class="modal-body">
+        <p><a href="http://mapc.org/resources/bike-transport" title="MAPC Bicycle Transportation Projects"><img class="map-cover" src="{{ STATIC_URL }}img/map-cover.png" /></a>This map is the most comprehensive compilation of the region's walking and bicycling facilities. Our goal is to provide a single source of information to allow people to plan and then traverse the region by foot and on bicycle.</p>
+
+        <p><strong>Walking Facilities</strong> - include hiking trails in conservation lands, paths through campuses, institutions, city parks, and other pedestrian facilities that are not along roadways.</p>
+
+        <p><strong>Bicycle Facilities</strong> – includes on-road designated facilities including bicycle lanes, shared lane markings, cycle tracks, and select on-road connections.</p>
+
+        <p><strong>Shared Use Paths</strong> – includes trails on former railroad rights-of-way, rivers, and other corridors which are designed for shared use by cyclists, walkers, and other nonmotorized transport. Improved paths are either paved, or with a stabilized firm surface, ideal for use by road bicycles, wheelchairs, strollers etc. Unimproved paths have a rough surface, and are therefore generally limited to hiking and mountain biking uses.</p>
+
+        <p><strong>Regional Networks</strong> – includes linear corridors that have been signed or otherwise designated. Walking trails include the Bay Circuit, Charles River Link, Warner Trail, Western Greenway, and proposed Metrowest aqueduct trail system. Bicycle routes include the East Coast Greenway and the Claire Saltonstall Bikeway.</p>
+
+        <p>This map was created by MAPC with contributions from cities, towns, state agencies, land trusts, other organizations, and individuals. This printed map represents the information available at the time of publication and is not considered a complete map. Data gaps exist, particularly with walking trails. This map is updated on a regular basis, incorporating new data and corrections.</p>
+
+        <p>Funding for this project is courtesy of the <a href="http://www.ctps.org/bostonmpo/index.html">Boston Region Metropolitan Planning Organization</a>.</p>
+
+        <p>Map printing courtesy of generous support from The Lawrence and Lillian Solomon Fund.</p>
+
+        <h3>Data within the map is credited to the following sources:</h3>
+
+        <ul>
+          <li><a href="http://www.mapc.org">MAPC &amp; MAPC Municipalities</a></li>
+          <li><a href="http://www.massdot.state.ma.us">Massachusetts Department of Transportation (MassDOT)</a></li>
+          <li><a href="http://www.mass.gov/dcr/">Massachusetts Department of Conservation and Recreation (DCR)</a></li>
+          <li><a href="http://www.mass.gov/mgis/">Office of Geographic Information (MassGIS)</a>, Commonwealth of Massachusetts, Information Technology Division</li>
+          <li><a href="http://www.bostonredevelopmentauthority.org/">Boston Redevelopment Authority</a></li>
+          <li><a href="http://www.mrpc.org/">Montachusett Regional Planning Commission</a></li>
+          <li>Some trail data &copy; <a href="http://www.openstreetmap.org" title="OpenStreetMap">OpenStreetMap</a> contributors, CC-BY-SA</li>
+          <li><a href="http://www.thetrustees.org/">The Trustees of Reservations</a></li>
+          <li><a href="http://www.ecga.org/">Essex County Greenbelt Association (ECGA)</a></li>
+          <li><a href="http://www.ectaonline.org/">Essex County Trail Association (ECTA)</a></li>
+          <li><a href="http://www.suasco.org/">SuAsCo Watershed Community Council</a></li>
+          <li><a href="http://westboroughlandtrust.org/">Westborough Community Land Trust</a></li>
+          <li><a href="http://www.northeastern.edu">Northeastern University</a></li>
+          <li><a href="http://www.tooledesign.com">Toole Design Group</a></li>
+          <li><a href="http://nacto.org/cities-for-cycling/design-guide/">NACTO Urban Bikeway Design Guide</a></li>
+          <li><a href="http://www.railstotrails.org/resources/documents/ourWork/trailBuilding/DraftBikeGuideFeb2010.pdf">AASHTO Guide for the Planning, Design, and Operation of Bicycle Facilities (Draft)</a></li>
+        </ul>
+
+        <h3>Contact for feedback and questions</h3>
+
+        <p>Send your suggestions, comments or questions to <strong>David Loutzenheiser</strong> (<a href="mailto:dloutzenheiser@mapc.org">dloutzenheiser@mapc.org</a>).
+
+        <p class="disclaimer">Disclaimer: The data herein is provided as is and for information purposes only. MAPC does not guarantee its completeness or accuracy. This project is a work in progress. Weather, traffic, construction or other events out of MAPC's control may affect the utility of the data provided. Plan accordingly and use caution, obey all applicable laws and follow generally accepted practices when using these facilities.</p>
+        
+      </div>
+    </div>
+
+    <div class="mapc-logo"><a href="http://www.mapc.org" title="Metropolitan Area Planning Council"><img src="{{ STATIC_URL }}/img/mapc-logo.png" alt="Metropolitan Area Planning Council" /></a></div>
+
+    <div id="map"></div>
+
+    <div class="mylocation">
+      <a href="javascript:void(0)" title="My Location"></a>
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/leaflet.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/TileLayer.Bing.js"></script>
+    <script type="text/javascript" src="http://tiles.mapc.org/layers.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery/detectmobilebrowser.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+    $(function() {
+
+      // redirect to mobile site
+      if ($.browser.mobile) window.location.replace("/m/");
+
+      // get #map margin-top
+      var mapmargin = parseInt($("#map").css("margin-top"), 10);
+      $('#map').css("height", ($(window).height() - mapmargin));
+      $(window).on("resize", function(e){
+        $('#map').css("height", ($(window).height() - mapmargin));
+      });
+
+      // layers
+      var basemap = new L.MAPCTileLayer("basemap");
+      var bing = new L.TileLayer.Bing("AtyTytHaexsLBZRFM6xu9DGevbYyVPykavcwVWG6wk24jYiEO9JJSmZmLuekkywR", "Aerial"); 
+      var osm = new L.TileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18, 
+        attribution: "Map data &copy; OpenStreetMap contributors"
+      });
+      var toposm = new L.TileLayer("http://toposm.com/ma/final/{z}/{x}/{y}.png", {
+        maxZoom: 17, 
+        attribution: "Map data &copy; OpenStreetMap contributors, Imagery &copy; TopOSM"
+      });
+      
+      var regional = new L.MAPCTileLayer("trailmap-regional");
+      var onroad = new L.MAPCTileLayer("trailmap-onroad");
+      var paths = new L.MAPCTileLayer("trailmap-paths");
+
+      var newfeedback = new L.LayerGroup();
+
+      var boston = new L.LatLng(42.357778, -71.061667); // geographical point (longitude and latitude)
+
+      // map
+      var map = new L.Map("map",{
+        minZoom: 9,
+        maxZoom: 17,
+        zoom: 10,
+        center: boston,
+        layers: [basemap, onroad, paths]
+      });
+
+      // new mapfeedback
+      map.addLayer(newfeedback);
+      $(".nav a.feedback").on("click", function(e) {
+        newfeedback.clearLayers();
+        var NewMapCommentIcon = L.Icon.extend({ //
+          iconUrl: '{{ STATIC_URL }}mapfeedback/img/mapcommenticonnew.png',
+          shadowUrl: null,
+          iconSize: new L.Point(32, 37),
+          shadowSize: null,
+          iconAnchor: new L.Point(14, 37),
+          popupAnchor: new L.Point(2, -16)
+        });
+        var mapcommenticonnew = new NewMapCommentIcon();
+        var mapcomment = new L.Marker(map.getCenter(), { 
+          icon: mapcommenticonnew,
+          draggable: true
+        });
+        var postdata = {
+          "location": { "coordinates": [map.getCenter().lng, map.getCenter().lat], "type": "Point" }
+        };
+        newfeedback.addLayer(mapcomment);
+        var feedbackform = "<div class='feedback-popup'> \
+                            <h3>Add Your Feedback</strong></h3> \
+                            <p>Move the green feedback marker to a location on the map, \
+                              add a short description of the issue and click \"Submit\" below to save your feedback.</p> \
+                            <input type='text' id='user_name' placeholder='Your Name (optional)'> \
+                            <input type='email' id='user_email' placeholder='Your Email (optional)'> \
+                            <textarea id='description' rows='3' placeholder='Your Feedback'></textarea> \
+                            <button class='btn btn-primary submit'>Submit</button><button class='cancel btn'>Cancel</button> \
+                            </div>";
+        mapcomment.bindPopup(feedbackform, {
+          closeButton: false
+        }).openPopup();
+        var clearComment = function() {
+          newfeedback.clearLayers();
+        }
+        var submitComment = function() {
+          if (!postdata["description"]) { 
+            $(".feedback-popup .label").remove();
+            $("#description").before("<span class='label label-important'>Please add a description</span>");
+            return false;
+          }
+          var emailReg = /^([a-zA-Z0-9_\.\-\+\'])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+          if ($("#user_email").val() && emailReg.test($("#user_email").val()) === false) {
+            $(".feedback-popup .label").remove();
+            $("#user_email").css("color", "#B94A48").before("<span class='label label-important'>Please correct your email-address</span>");
+            return false;
+          }
+          $.ajax({
+            type: "POST",
+            url: "/api/v1/comment/",
+            data: JSON.stringify(postdata),
+            contentType:'application/json',
+            dataType: 'json',
+            processData: false
+          }).done(function(msg) {
+            var newmapcomment = {
+              "type": "Feature",
+              "properties": {
+                "popupContent": ((postdata["user_name"] !== undefined) ? ("<strong>" + postdata["user_name"] + ":</strong> ") : "") + postdata["description"]
+              },
+              "geometry": postdata["location"]
+            };
+            mapcomments.addGeoJSON(newmapcomment);
+            map.addLayer(mapcomments);
+            newfeedback.clearLayers();
+          });
+        }
+        $(".feedback-popup .btn.cancel").on("click", function(e) { clearComment(); });
+        $(".feedback-popup .btn.submit").on("click", function(e) { submitComment(); });
+        $(".feedback-popup input, .feedback-popup textarea").on("keyup", function(e) { postdata[$(this).attr("id")] = $(this).val(); });
+        mapcomment.on("dragend", function(e) {
+          mapcomment.openPopup();
+          $(".feedback-popup input, .feedback-popup textarea").on("keyup", function(e) { postdata[$(this).attr("id")] = $(this).val(); });
+          $(".feedback-popup .btn.cancel").on("click", function(e) { clearComment(); });
+          $(".feedback-popup .btn.submit").on("click", function(e) { submitComment(); });
+          postdata["location"]["coordinates"] = [e.target.getLatLng().lng, e.target.getLatLng().lat];
+          for (var key in postdata) {
+            $("#" + key).val(postdata[key]);
+          }
+        });
+      });
+      // existing comments
+      var MapCommentIcon = L.Icon.extend({
+        iconUrl: '{{ STATIC_URL }}mapfeedback/img/mapcommenticon.png',
+        shadowUrl: null,
+        iconSize: new L.Point(32, 37),
+        shadowSize: null,
+        iconAnchor: new L.Point(14, 37),
+        popupAnchor: new L.Point(2, -16)
+      });
+      var mapcomments = new L.GeoJSON(null, {
+        pointToLayer: function(latlng) {
+            return new L.Marker(latlng, {
+                icon: new MapCommentIcon()
+            });
+        }
+      });
+      mapcomments.on("featureparse", function(e) {  
+        if (e.properties && e.properties.popupContent) {
+            e.layer.bindPopup(e.properties.popupContent);
+        }
+      });
+      var parameters = {
+          "format": "json"
+      };
+      $.getJSON("/api/v1/comment/", parameters, function(data) {
+        $.each(data.objects, function(key, feature) {
+          var mapcomment = {
+            "type": "Feature",
+            "properties": {
+              "popupContent": ((feature["user_name"] !== null && feature["user_name"] !== "") ? ("<strong>" + feature["user_name"] + ":</strong> ") : "") + feature["description"]
+            },
+            "geometry": feature["location"]
+          };
+          mapcomments.addGeoJSON(mapcomment); 
+        });
+      });
+
+      // hubway stations
+      var HubwayIcon = L.Icon.extend({
+        iconUrl: '{{ STATIC_URL }}hubway/img/hubway.png',
+        shadowUrl: null,
+        iconSize: new L.Point(20, 26),
+        shadowSize: null,
+        iconAnchor: new L.Point(12, 26),
+        popupAnchor: new L.Point(2, -20)
+      });
+      var hubwaystations = new L.GeoJSON(null, {
+        pointToLayer: function(latlng) {
+            return new L.Marker(latlng, {
+                icon: new HubwayIcon()
+            });
+        }
+      });
+      hubwaystations.on("featureparse", function(e) {  
+        if (e.properties && e.properties.popupContent) {
+            e.layer.bindPopup(e.properties.popupContent);
+        }
+      });
+      $.getJSON("/hubway/status/", function(data) {
+        $.each(data.features, function(key, feature) {
+          var hubwaystation = feature;
+          hubwaystation["properties"]["popupContent"] = "<strong>" + this["properties"]["name"] + "</strong><br> \
+                                                        Available Bikes: " + this["properties"]["bikes"] + "<br> \
+                                                        Empty Docks: " + this["properties"]["emptydocks"];
+          hubwaystations.addGeoJSON(hubwaystation); 
+        });
+      });
+
+      // find my location
+      var locationset = false;
+      $(".mylocation").on("click", function(e){
+        if (!locationset) {
+          map.locateAndSetView();
+          locationset = true;
+        } else {
+          map.removeLayer(circle);
+          locationset = false;
+        }
+      });
+      var circle;
+      function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+        circle = new L.Circle(e.latlng, radius, {
+          color: "#B94A48",
+          opacity: 0.8,
+          weight: 2
+        });
+        map.addLayer(circle);
+      }
+      function onLocationError(e) {
+          var boston = new L.LatLng(42.357778, -71.061667); // geographical point (longitude and latitude)
+          map.setView(boston, 9);
+      }
+      map.on("locationfound", onLocationFound);
+      map.on("locationerror", onLocationError);
+      
+      // layer control
+      var baseLayers = {
+        "MAPC Basemap": basemap,
+        "OpenStreetMap": osm,
+        "TopOSM": toposm,
+        "Bing Aerial": bing
+      };
+      var overlays = {
+        "Regional Networks": regional,
+        "On-road Bicycle Facilities": onroad,
+        "Paths and Trails": paths,
+        "Hubway Stations": hubwaystations,
+        "Feedback": mapcomments
+      };
+      layersControl = new L.Control.Layers(baseLayers, overlays, {
+        collapsed: false
+      });
+      map.addControl(layersControl);
+    });
+    </script>
+
+  </body>
+</html>

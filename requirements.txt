@@ -1,5 +1,6 @@
-Django==1.3
-South==0.7.3
-django-disqus==0.4.1
--e git://github.com/justquick/django-math-captcha.git@472c6ef504739c7a14f7bfc46ba94e5e74f42736#egg=django_math_captcha-dev
-psycopg2==2.4
+Django==1.4
+django-tastypie==0.9.11
+mimeparse==0.1.3
+psycopg2==2.4.5
+python-dateutil==1.5
+wsgiref==0.1.2
