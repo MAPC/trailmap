@@ -171,8 +171,44 @@
           padding-top: 10px;
         }
       }
+      .ie-legacy-hack {
+        display: none;
+      }
+
 
     </style>
+    <!--[if lte IE 9]>
+    <style type="text/css">
+      .ie-legacy-hack {
+        display: inline;
+      }
+    </style>
+    <![endif]-->
+
+    <!--[if lte IE 8]> 
+    <style type="text/css">
+      .navbar .brand {
+        font-size: 20px;
+      }
+      .mylocation {
+        display: none;
+      }
+    </style>
+    <![endif]-->
+
+    <!--[if IE 7]> 
+    <style type="text/css">
+      .mapc-logo {
+        display: none;
+      }
+      .navbar-fixed-top {
+        position: relative; 
+      }
+      #map {
+        margin-top: 0px;
+      }
+    </style>
+    <![endif]-->
 
     <!-- Google Analytics -->
     <script type="text/javascript">
@@ -497,8 +533,11 @@
                             <h3>Add Your Feedback</strong></h3> \
                             <p>Move the green feedback marker to a location on the map, \
                               add a short description of the issue and click \"Submit\" below to save your feedback.</p> \
+                            <span class='ie-legacy-hack'><br>Your Name (optional)<br></span> \
                             <input type='text' id='user_name' placeholder='Your Name (optional)'> \
+                            <span class='ie-legacy-hack'><br>Your Email (optional)<br></span> \
                             <input type='email' id='user_email' placeholder='Your Email (optional)'> \
+                            <span class='ie-legacy-hack'><br>Your Feedback<br></span> \
                             <textarea id='description' rows='3' placeholder='Your Feedback'></textarea> \
                             <button class='btn btn-primary submit'>Submit</button><button class='cancel btn'>Cancel</button> \
                             </div>";
@@ -511,13 +550,13 @@
         var submitComment = function() {
           if (!postdata["description"]) { 
             $(".feedback-popup .label").remove();
-            $("#description").before("<span class='label label-important'>Please add a description</span>");
+            $("#description").before("<span class='label label-important'>Please add a description</span><br>");
             return false;
           }
           var emailReg = /^([a-zA-Z0-9_\.\-\+\'])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
           if ($("#user_email").val() && emailReg.test($("#user_email").val()) === false) {
             $(".feedback-popup .label").remove();
-            $("#user_email").css("color", "#B94A48").before("<span class='label label-important'>Please correct your email-address</span>");
+            $("#user_email").css("color", "#B94A48").before("<span class='label label-important'>Please correct your email-address</span><br>");
             return false;
           }
           $.ajax({
