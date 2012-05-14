@@ -1,4 +1,5 @@
 from tastypie import fields
+from tastypie.cache import SimpleCache
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.authorization import Authorization
 
@@ -24,6 +25,7 @@ class CommentResource(GeoResource):
         queryset = Comment.objects.filter(followup='n')
         allowed_methods = ['get', 'post', ]
         excludes = ['admin_key', 'followup', 'last_modified',]
+        cache = SimpleCache()
         authorization = Authorization()
         include_resource_uri = False
         filtering = {
