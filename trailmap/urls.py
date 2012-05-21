@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'trailmap.views.home', name='home'),
     # url(r'^trailmap/', include('trailmap.foo.urls')),
     ('^$', TemplateView.as_view(template_name='index.html')),
+    ('^embed/$', TemplateView.as_view(template_name='embed.html')),
 
     # API
     (r'^api/', include(v1_api.urls)),

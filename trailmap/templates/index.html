@@ -155,6 +155,14 @@
         padding-top: 12px;
       }
 
+      .leaflet-control-permalink {
+        /*display: none;*/
+      }
+
+      .embed-code {
+        width: 90%;
+      }
+
       /* Responsive design
       -------------------------------------------------- */
 
@@ -264,7 +272,7 @@
             <ul class="nav">
               <li><a data-toggle="modal" href="#legendModal">Map Legend</a></li>
               <li><a data-toggle="modal" href="#aboutModal">About</a></li>
-              <li><a data-toggle="modal" href="#embedModal">Embed</a></li>
+              <li><a data-toggle="modal" class="embed-button" href="#embedModal">Embed</a></li>
               <li><a data-toggle="modal" class="feedback" href="javascript:void(0)"><strong>Add Feedback</strong></a></li>
             </ul>
             <ul class="sm nav pull-right">
@@ -444,6 +452,23 @@
         <p>Send your suggestions, comments or questions to <strong>David Loutzenheiser</strong> (<a href="mailto:dloutzenheiser@mapc.org">dloutzenheiser@mapc.org</a>).
 
         <p class="disclaimer">Disclaimer: The data herein is provided as is and for information purposes only. MAPC does not guarantee its completeness or accuracy. This project is a work in progress. Weather, traffic, construction or other events out of MAPC's control may affect the utility of the data provided. Plan accordingly and use caution, obey all applicable laws and follow generally accepted practices when using these facilities.</p>
+        
+      </div>
+    </div>
+
+    <div class="modal hide fade" id="embedModal">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Show the Trailmap on your website!</h3>
+      </div>
+      <div class="modal-body">
+        
+        <p>You can embed and show the Trailmap on your website in two easy steps:</p>
+        <ol>
+          <li>Zoom and pan the map to the location you would like to show</li>
+          <li>Copy &amp; paste the code-snippet below into your website</li>
+        </ol>
+        <p><textarea class="embed-code" rows='4'>my embedcode</textarea></p>
         
       </div>
     </div>
@@ -708,6 +733,19 @@
         collapsed: false
       });
       map.addControl(layersControl);
+
+      // Permalink
+      var permalinkControl = new L.Control.Permalink(null, {
+        position: "bottomright"
+      });
+      map.addControl(permalinkControl);
+      // leaflet-control-permalink
+      $(".embed-button").on("click", function(e) { 
+        var permalink = $(".leaflet-control-permalink a").attr("href")
+        var embedurl = permalink.replace("/#","/embed/#");
+        var embedcode = "<iframe width=\"500\" height=\"350\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"" + embedurl + "\"></iframe><br><small><a href=\"" + permalink + "\">View larger Trailmap</a></small>"
+        $(".embed-code").val(embedcode);
+      });
     });
     </script>
 
