@@ -151,7 +151,7 @@
         margin-right: 4px;
       }
       .sm li {
-        width: 100px;
+        width: 70px;
         padding-top: 12px;
       }
 
@@ -264,10 +264,11 @@
             <ul class="nav">
               <li><a data-toggle="modal" href="#legendModal">Map Legend</a></li>
               <li><a data-toggle="modal" href="#aboutModal">About</a></li>
+              <li><a data-toggle="modal" href="#embedModal">Embed</a></li>
               <li><a data-toggle="modal" class="feedback" href="javascript:void(0)"><strong>Add Feedback</strong></a></li>
             </ul>
             <ul class="sm nav pull-right">
-              <li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://trailmap.mapc.org" data-text="I'm exploring bike and walking paths in Metro Boston!" data-via="MAPCMetroBoston" data-hashtags="MAPCTrailmap">Tweet</a>
+              <li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://trailmap.mapc.org" data-count="none" data-text="I'm exploring bike and walking paths in Metro Boston!" data-via="MAPCMetroBoston" data-hashtags="MAPCTrailmap">Tweet</a>
                 <script>
                 window.twttr = (function (d,s,id) {
                   var t, js, fjs = d.getElementsByTagName(s)[0];
@@ -460,6 +461,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/leaflet.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/TileLayer.Bing.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/Permalink.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/mapc-layers.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery/detectmobilebrowser.js"></script>
@@ -512,7 +514,7 @@
       map.addLayer(newfeedback);
       $(".nav a.feedback").on("click", function(e) {
         newfeedback.clearLayers();
-        var NewMapCommentIcon = L.Icon.extend({ //
+        var NewMapCommentIcon = new L.Icon({
           iconUrl: '{{ STATIC_URL }}mapfeedback/img/mapcommenticonnew.png',
           shadowUrl: null,
           iconSize: new L.Point(32, 37),
@@ -520,9 +522,8 @@
           iconAnchor: new L.Point(14, 37),
           popupAnchor: new L.Point(2, -16)
         });
-        var mapcommenticonnew = new NewMapCommentIcon();
         var mapcomment = new L.Marker(map.getCenter(), { 
-          icon: mapcommenticonnew,
+          icon: NewMapCommentIcon,
           draggable: true
         });
         var postdata = {
@@ -539,7 +540,7 @@
                             <input type='email' id='user_email' placeholder='Your Email (optional)'> \
                             <span class='ie-legacy-hack'><br>Your Feedback<br></span> \
                             <textarea id='description' rows='3' placeholder='Your Feedback'></textarea> \
-                            <button class='btn btn-primary submit'>Submit</button><button class='cancel btn'>Cancel</button> \
+                            <br><button class='btn btn-primary submit'>Submit</button><button class='cancel btn'>Cancel</button> \
                             </div>";
         mapcomment.bindPopup(feedbackform, {
           closeButton: false
@@ -594,7 +595,7 @@
         });
       });
       // existing comments
-      var MapCommentIcon = L.Icon.extend({
+      var MapCommentIcon = new L.Icon({
         iconUrl: '{{ STATIC_URL }}mapfeedback/img/mapcommenticon.png',
         shadowUrl: null,
         iconSize: new L.Point(32, 37),
@@ -605,7 +606,7 @@
       var mapcomments = new L.GeoJSON(null, {
         pointToLayer: function(latlng) {
             return new L.Marker(latlng, {
-                icon: new MapCommentIcon()
+                icon: MapCommentIcon
             });
         }
       });
@@ -631,7 +632,7 @@
       });
 
       // hubway stations
-      var HubwayIcon = L.Icon.extend({
+      var HubwayIcon = new L.Icon({
         iconUrl: '{{ STATIC_URL }}hubway/img/hubway.png',
         shadowUrl: null,
         iconSize: new L.Point(20, 26),
@@ -642,7 +643,7 @@
       var hubwaystations = new L.GeoJSON(null, {
         pointToLayer: function(latlng) {
             return new L.Marker(latlng, {
-                icon: new HubwayIcon()
+                icon: HubwayIcon
             });
         }
       });
