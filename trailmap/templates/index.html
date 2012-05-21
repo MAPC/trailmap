@@ -468,7 +468,7 @@
           <li>Zoom and pan the map to the location you would like to show</li>
           <li>Copy &amp; paste the code-snippet below into your website</li>
         </ol>
-        <p><textarea class="embed-code" rows='4'>my embedcode</textarea></p>
+        <p><textarea class="embed-code" rows="6">my embedcode</textarea></p>
         
       </div>
     </div>
@@ -745,6 +745,15 @@
         var embedurl = permalink.replace("/#","/embed/#");
         var embedcode = "<iframe width=\"500\" height=\"350\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"" + embedurl + "\"></iframe><br><small><a href=\"" + permalink + "\">View larger Trailmap</a></small>"
         $(".embed-code").val(embedcode);
+      });
+      // select embed-code on focus
+      $(".embed-code").focus(function() {
+        $this = $(this);
+        $this.select();
+        $this.mouseup(function() {
+          $this.unbind("mouseup");
+           return false;
+        });
       });
     });
     </script>
