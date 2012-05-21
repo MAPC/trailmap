@@ -484,7 +484,7 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/leaflet.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/leaflet-src.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/TileLayer.Bing.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/Permalink.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/mapc-layers.js"></script>
@@ -691,7 +691,7 @@
       var locationset = false;
       $(".mylocation").on("click", function(e){
         if (!locationset) {
-          map.locateAndSetView();
+          map.locate({setView: true}); 
           locationset = true;
         } else {
           map.removeLayer(circle);
