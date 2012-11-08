@@ -484,9 +484,9 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/leaflet-src.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/TileLayer.Bing.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/Permalink.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/leaflet.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/plugins/pavel-shramov/layer/tile/Bing.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/leaflet/plugins/pavel-shramov/control/Permalink.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/mapc-layers.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery/detectmobilebrowser.js"></script>
@@ -507,8 +507,8 @@
       });
 
       // layers
-      var basemap = new L.MAPCTileLayer("basemap");
-      var bing = new L.TileLayer.Bing("An8pfp-PjegjSInpD2JyXw5gMufAZBvZ_q3cbJb-kWiZ1H55gpJbxndbFHPsO_HN", "Aerial"); 
+      var basemap = new L.MAPCTileLayer("basemap"); 
+      var bing = new L.BingLayer("An8pfp-PjegjSInpD2JyXw5gMufAZBvZ_q3cbJb-kWiZ1H55gpJbxndbFHPsO_HN", "Aerial");
       var osm = new L.TileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18, 
         attribution: "Map data &copy; OpenStreetMap contributors"
@@ -600,7 +600,7 @@
               },
               "geometry": postdata["location"]
             };
-            mapcomments.addGeoJSON(newmapcomment);
+            mapcomments.addData(newmapcomment);
             map.addLayer(mapcomments);
             newfeedback.clearLayers();
           });
@@ -628,18 +628,21 @@
         iconAnchor: new L.Point(14, 37),
         popupAnchor: new L.Point(2, -16)
       });
-      var mapcomments = new L.GeoJSON(null, {
-        pointToLayer: function(latlng) {
+
+      var mapcomments = new L.geoJson(null, {
+        pointToLayer: function(feature, latlng) {
             return new L.Marker(latlng, {
                 icon: MapCommentIcon
             });
+        },
+        onEachFeature: function onEachFeature(feature, layer) {
+            // does this feature have a property named popupContent?
+            if (feature.properties && feature.properties.popupContent) {
+                layer.bindPopup(feature.properties.popupContent);
+            }
         }
       });
-      mapcomments.on("featureparse", function(e) {  
-        if (e.properties && e.properties.popupContent) {
-            e.layer.bindPopup(e.properties.popupContent);
-        }
-      });
+
       var parameters = {
           "format": "json"
       };
@@ -652,7 +655,7 @@
             },
             "geometry": feature["location"]
           };
-          mapcomments.addGeoJSON(mapcomment); 
+          mapcomments.addData(mapcomment); 
         });
       });
 
@@ -665,25 +668,27 @@
         iconAnchor: new L.Point(12, 26),
         popupAnchor: new L.Point(2, -20)
       });
-      var hubwaystations = new L.GeoJSON(null, {
-        pointToLayer: function(latlng) {
+      var hubwaystations = new L.geoJson(null, {
+        pointToLayer: function(feature, latlng) {
             return new L.Marker(latlng, {
                 icon: HubwayIcon
             });
+        },
+        onEachFeature: function onEachFeature(feature, layer) {
+            // does this feature have a property named popupContent?
+            if (feature.properties && feature.properties.popupContent) {
+                layer.bindPopup(feature.properties.popupContent);
+            }
         }
       });
-      hubwaystations.on("featureparse", function(e) {  
-        if (e.properties && e.properties.popupContent) {
-            e.layer.bindPopup(e.properties.popupContent);
-        }
-      });
+
       $.getJSON("/hubway/status/", function(data) {
         $.each(data.features, function(key, feature) {
           var hubwaystation = feature;
           hubwaystation["properties"]["popupContent"] = "<strong>" + this["properties"]["name"] + "</strong><br> \
                                                         Available Bikes: " + this["properties"]["bikes"] + "<br> \
                                                         Empty Docks: " + this["properties"]["emptydocks"];
-          hubwaystations.addGeoJSON(hubwaystation); 
+          hubwaystations.addData(hubwaystation); 
         });
       });
 
@@ -735,11 +740,11 @@
       map.addControl(layersControl);
 
       // Permalink
-      var permalinkControl = new L.Control.Permalink(null, {
+      var permalinkControl = new L.Control.Permalink({
         position: "bottomright"
       });
       map.addControl(permalinkControl);
-      // leaflet-control-permalink
+      // Embed code
       $(".embed-button").on("click", function(e) { 
         var permalink = $(".leaflet-control-permalink a").attr("href")
         var embedurl = permalink.replace("/#","/embed/#");
