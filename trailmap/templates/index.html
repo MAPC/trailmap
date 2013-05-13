@@ -142,6 +142,9 @@
       .legend .layersymbol.ip, .legend .layername.ip { color: #229848; }
       .legend .layersymbol.up, .legend .layername.up { color: #845723; }
       .legend .layersymbol.p, .legend .layername.p { color: #db813f; }
+      .legend .layersymbol.ns, .legend .layername.ns { color: #ccc; }
+      .legend .layersymbol.os, .legend .layername.os { color: #CDAA66; }
+      .legend .layersymbol.bs, .legend .layername.bs { color: #5C8944; }
       .legend .layersymbol.wt, .legend .layername.wt { color: #49c9f5; }
 
       .feedback-popup input, .feedback-popup textarea {
@@ -379,6 +382,24 @@
             <td class="layersymbol p">&ndash;&ndash;&ndash;</td>
           </tr>
           <tr>
+            <td class="grouphead" colspan="3">Sidewalk Inventory</td>
+          </tr>
+          <tr>
+            <td class="layername ns">No Sidewalk</td>
+            <td>&nbsp;</td>
+            <td class="layersymbol ns">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="layername os">Sidewalk on one side</td>
+            <td>&nbsp;</td>
+            <td class="layersymbol os">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
+            <td class="layername bs">Sidewalk on both sides</td>
+            <td>&nbsp;</td>
+            <td class="layersymbol bs">&ndash;&ndash;&ndash;</td>
+          </tr>
+          <tr>
             <td class="grouphead" colspan="3">Water Facilities</td>
           </tr>
           <tr>
@@ -521,6 +542,12 @@
       var regional = new L.MAPCTileLayer("trailmap-regional");
       var onroad = new L.MAPCTileLayer("trailmap-onroad");
       var paths = new L.MAPCTileLayer("trailmap-paths");
+
+      var sidewalks = L.tileLayer.wms("http://ec2-54-235-170-211.compute-1.amazonaws.com/geoserver/wms", {
+        layers: "geonode:sidewalks",
+        format: "image/png",
+        transparent: true
+      });
 
       var newfeedback = new L.LayerGroup();
 
@@ -731,6 +758,7 @@
         "Regional Networks": regional,
         "On-road Bicycle Facilities": onroad,
         "Paths and Trails": paths,
+        "Sidewalk Inventory": sidewalks,
         "Hubway Stations": hubwaystations,
         "Feedback": mapcomments
       };
