@@ -45,34 +45,35 @@ class Command(BaseCommand):
             bikeStations = response.read()
             h_stations = etree.XML(bikeStations)
             lastUpdate = float(h_stations.attrib['lastUpdate'])/1000 #milliseconds to seconds
+
             for h_station in h_stations:
                 station_id = h_station.findtext('id')
-                # add station if we don't have it in our database
-                try:
-                    station = Station.objects.get(pk=station_id)
-                    # add removal date to existing station if given
-                    if h_station.findtext('removalDate') != '':
-                        removalDate = float(h_station.findtext('removalDate'))/1000
-                        station.removalDate = datetime.datetime.fromtimestamp(removalDate)
-                        station.save()
-                except:
+
+                stations = Station.objects.filter(pk=station_id)
+                
+                # update or add new station
+                if stations.exists():
+                    station = stations[0]
+                else:
                     station = Station()
                     station.id = station_id
-                    station.name = h_station.findtext('name')
-                    station.terminalName = h_station.findtext('terminalName')
-                    station.installed = True if h_station.findtext('installed') in ['true', 'True'] else False 
-                    station.locked = True if h_station.findtext('locked') in ['true', 'True'] else False 
-                    if h_station.findtext('installDate') != '':
-                        installDate = float(h_station.findtext('installDate'))/1000
-                        station.installDate = datetime.datetime.fromtimestamp(installDate)
-                    # a removal date for a new station shouldn't be possible...
-                    if h_station.findtext('removalDate') != '':
-                        removalDate = float(h_station.findtext('removalDate'))/1000
-                        station.removalDate = datetime.datetime.fromtimestamp(removalDate)
-                    station.temporary = True if h_station.findtext('temporary') in ['true', 'True'] else False 
-                    station_location_wkt = 'POINT(%s %s)' % (h_station.findtext('long'), h_station.findtext('lat'))
-                    station.location = GEOSGeometry(station_location_wkt)
-                    station.save()
+
+                # update station properties, every time
+                station.name = h_station.findtext('name')
+                station.terminalName = h_station.findtext('terminalName')
+                station.installed = True if h_station.findtext('installed') in ['true', 'True'] else False 
+                station.locked = True if h_station.findtext('locked') in ['true', 'True'] else False 
+                if h_station.findtext('installDate') != '':
+                    installDate = float(h_station.findtext('installDate'))/1000
+                    station.installDate = datetime.datetime.fromtimestamp(installDate)
+                # a removal date for a new station shouldn't be possible...
+                if h_station.findtext('removalDate') != '':
+                    removalDate = float(h_station.findtext('removalDate'))/1000
+                    station.removalDate = datetime.datetime.fromtimestamp(removalDate)
+                station.temporary = True if h_station.findtext('temporary') in ['true', 'True'] else False 
+                station_location_wkt = 'POINT(%s %s)' % (h_station.findtext('long'), h_station.findtext('lat'))
+                station.location = GEOSGeometry(station_location_wkt)
+                station.save()
                 
                 # add stationstatus entry
                 stationstatus = Stationstatus()
@@ -81,6 +82,7 @@ class Command(BaseCommand):
                 stationstatus.nbBikes = h_station.findtext('nbBikes')
                 stationstatus.nbEmptyDocks = h_station.findtext('nbEmptyDocks')
                 stationstatus.save()
+                
         except: 
             raise CommandError("An Error occurred.")
             pass
