@@ -543,7 +543,7 @@
       var onroad = new L.MAPCTileLayer("trailmap-onroad");
       var paths = new L.MAPCTileLayer("trailmap-paths");
 
-      var sidewalks = L.tileLayer.wms("http://metrobostondatacommon.org/geoserver/wms", {
+      var sidewalks = L.tileLayer.wms("http://metrobostondatacommon.org/geoserver/gwc/service/wms", {
         layers: "geonode:sidewalks",
         format: "image/png",
         transparent: true
